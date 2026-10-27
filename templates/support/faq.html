@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}FAQ | Maison Heure{% endblock %}
+{% block content %}
+<div class="container container-narrow">
+  <div class="page-head">
+    <span class="eyebrow">Help centre</span>
+    <h1>Frequently asked questions</h1>
+    <p>{{ faq_count }} answers, straight from our database — the same answers our assistant uses.</p>
+  </div>
+  {% for category, faqs in groups %}
+    <h2 class="faq-category label-lg">{{ category }}</h2>
+    <div class="faq-list">
+      {% for faq in faqs %}
+        <details class="faq-item reveal" id="faq-{{ faq.pk }}">
+          <summary>{{ faq.question }}</summary>
+          <div class="answer">{{ faq.answer|linebreaksbr }}</div>
+        </details>
+      {% endfor %}
+    </div>
+  {% endfor %}
+  <div class="panel text-center" style="margin-top: 50px;">
+    <h2 class="title-sm">Still stuck?</h2>
+    <p class="small" style="margin: 8px 0 16px;">Ask the concierge — if it can't answer, it opens a support ticket for our team.</p>
+    <button class="btn btn-primary" type="button" data-ask="I have a question that isn't in the FAQ">Ask the assistant</button>
+  </div>
+</div>
+{% endblock %}

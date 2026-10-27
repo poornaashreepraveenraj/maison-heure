@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load store_extras %}
+{% block title %}Order {{ order.reference }} confirmed | Maison Heure{% endblock %}
+{% block content %}
+<div class="container container-narrow">
+  <div class="page-head">
+    <span class="eyebrow">Thank you</span>
+    <h1>Order confirmed</h1>
+    <p>Your reference is <strong>{{ order.reference }}</strong>. A confirmation email is on its way to {{ order.email }}.</p>
+  </div>
+  <div class="panel-white stack">
+    <div class="row-between">
+      <span class="badge badge-success">Payment {{ order.get_payment_status_display|lower }}</span>
+      <span class="caption">Estimated delivery {{ order.estimated_delivery|date:"D j M Y" }}</span>
+    </div>
+    <table class="data-table">
+      <caption class="visually-hidden">Items</caption>
+      {% for item in order.items.all %}
+        <tr><td>{{ item.watch.title }}<br><span class="caption">Ref. {{ item.watch.reference_number }}</span></td><td style="text-align: right;">{% price item.price_at_purchase %}</td></tr>
+      {% endfor %}
+      <tr><td>Insured shipping</td><td style="text-align: right;">{% price order.shipping %}</td></tr>
+      <tr><td>GST (margin scheme)</td><td style="text-align: right;">{% price order.tax %}</td></tr>
+      {% if order.discount %}<tr><td>Discount {{ order.promo_code }}</td><td style="text-align: right;">−{% price order.discount "" %}</td></tr>{% endif %}
+      <tr><td><strong style="font-weight: 600;">Total</strong></td><td style="text-align: right;"><strong style="font-weight: 600;">{% price order.total %}</strong></td></tr>
+    </table>
+    <div class="row">
+      <a class="btn btn-primary" href="{{ order.get_absolute_url }}">Track this order</a>
+      <a class="btn btn-outline" href="{% url 'store:shop' %}">Continue shopping</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Sell or consign your watch | Maison Heure{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="page-head">
+    <span class="eyebrow">Sell with us</span>
+    <h1>Sell your watch</h1>
+    <p>Tell us about your watch. A specialist replies within two business days with an offer to buy or consign.</p>
+  </div>
+  <div class="checkout-layout">
+    <form class="form-panel" method="post" novalidate>
+      {% csrf_token %}
+      <h2 class="title-sm" style="margin-bottom: 20px;">About you</h2>
+      <div class="field-row">
+        {% include "partials/form_field.html" with field=form.name %}
+        {% include "partials/form_field.html" with field=form.phone %}
+      </div>
+      {% include "partials/form_field.html" with field=form.email %}
+      <h2 class="title-sm" style="margin: 32px 0 20px;">About the watch</h2>
+      <div class="field-row">
+        {% include "partials/form_field.html" with field=form.brand %}
+        {% include "partials/form_field.html" with field=form.model %}
+      </div>
+      <div class="field-row">
+        {% include "partials/form_field.html" with field=form.year %}
+        {% include "partials/form_field.html" with field=form.condition %}
+      </div>
+      {% include "partials/form_field.html" with field=form.asking_price %}
+      {% include "partials/form_field.html" with field=form.box_and_papers %}
+      {% include "partials/form_field.html" with field=form.photos %}
+      <button class="btn btn-primary" type="submit" style="margin-top: 24px;">Submit for valuation</button>
+    </form>
+    <aside class="summary">
+      <h2 class="title-sm">How it works</h2>
+      <ol class="small stack-sm" style="padding-left: 18px;">
+        <li>Submit the details and a few photos.</li>
+        <li>We reply with an indicative offer within 2 business days.</li>
+        <li>Insured pickup, then full inspection in our workshop.</li>
+        <li>Accept our offer, or let us sell it for you on consignment.</li>
+      </ol>
+      <p class="caption">Track the status of your submission in your account.</p>
+      <button class="btn btn-ghost" type="button" data-ask="How is the resale price decided?">How is the price decided?</button>
+    </aside>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% if messages %}
+<div class="container">
+  <ul class="messages" data-messages>
+    {% for message in messages %}
+      <li class="message {{ message.tags }}" role="{% if message.tags == 'error' %}alert{% else %}status{% endif %}">
+        <span>{{ message }}</span>
+        <button type="button" data-dismiss aria-label="Dismiss message">&times;</button>
+      </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Service status | Maison Heure{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="page-head">
+    <span class="eyebrow">Monitoring</span>
+    <h1>Service status</h1>
+    <p>Overall: <span class="badge{% if health.status == 'ok' %} badge-success{% elif health.status == 'down' %} badge-danger{% endif %}" data-health-status>{{ health.status }}</span> · Uptime <span data-health-uptime>{{ health.uptime_seconds }}</span>s · <span class="timeline-live"><span class="live-dot" aria-hidden="true"></span>Refreshes every 10 s</span> · <a class="link" href="?format=json">JSON</a></p>
+  </div>
+  <div class="health-grid" data-health>
+    <div class="stat-card"><span class="label">SQL database</span><span class="title-sm"><span class="status-dot {% if health.checks.database == 'ok' %}ok{% else %}down{% endif %}"></span><span data-check="database">{{ health.checks.database }}</span></span></div>
+    <div class="stat-card"><span class="label">MongoDB</span><span class="title-sm"><span class="status-dot {% if health.checks.mongodb == 'ok' %}ok{% elif health.checks.mongodb == 'down' %}down{% endif %}"></span><span data-check="mongodb">{{ health.checks.mongodb }}</span></span></div>
+    <div class="stat-card"><span class="label">FX rates API</span><span class="title-sm"><span class="status-dot {% if health.checks.exchange_rates == 'live' %}ok{% endif %}"></span><span data-check="exchange_rates">{{ health.checks.exchange_rates }}</span></span></div>
+    <div class="stat-card"><span class="label">AI assistant (Claude)</span><span class="title-sm"><span class="status-dot {% if health.checks.anthropic_configured %}ok{% endif %}"></span><span data-check="anthropic_configured">{{ health.checks.anthropic_configured|yesno:"configured,not configured" }}</span></span></div>
+  </div>
+  <p class="caption text-center" style="margin-top: 24px;">The page returns HTTP 503 if the SQL database is unreachable. MongoDB and FX failures degrade gracefully.</p>
+</div>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Authentication process | Maison Heure{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="page-head">
+    <span class="eyebrow">About Maison Heure</span>
+    <h1>Every watch, verified by hand</h1>
+    <p>We are a small team of watchmakers and collectors giving fine watches a second life.</p>
+  </div>
+
+  <section class="about-split section" style="padding-top: 0;">
+    <img src="{% static 'img/watches/rolex-oyster-perpetual-1002-1978-3.svg' %}" alt="Illustration of a watch caseback marked Maison Heure Certified" width="600" height="600" loading="lazy">
+    <div class="prose">
+      <h2 class="h3">Why pre-owned?</h2>
+      <p>A well-made mechanical watch can run for generations. Buying pre-owned means less waste, access to discontinued references and fair prices — as long as you can trust what you buy.</p>
+      <p>That trust is our product. Every watch we list has been inspected in our workshop, regulated if needed, photographed honestly and documented with a signed report.</p>
+    </div>
+  </section>
+
+  <section class="section section-band" style="margin-inline: calc(var(--gutter) * -1); padding-inline: var(--gutter);">
+    {% include "partials/section_head.html" with eyebrow="Authentication" title="The four steps" %}
+    <div class="process" data-process>
+      <div class="process-line" aria-hidden="true"><span data-process-fill></span></div>
+      <div class="process-step reveal"><span class="process-num">01</span><h3>Inspection</h3><p>Serial and reference numbers, dial printing, hands, crystal, case finishing and bracelet are checked under 10× magnification.</p></div>
+      <div class="process-step reveal"><span class="process-num">02</span><h3>Movement check</h3><p>The caseback is opened in a dust-free bench; we confirm the calibre and measure rate, amplitude and beat error.</p></div>
+      <div class="process-step reveal"><span class="process-num">03</span><h3>Polishing</h3><p>Optional and conservative. Original, unpolished cases keep more value, so we only refinish on request.</p></div>
+      <div class="process-step reveal"><span class="process-num">04</span><h3>Certified</h3><p>A signed certificate, timegrapher printout and photographs are issued, and the 12-month warranty begins on delivery.</p></div>
+    </div>
+  </section>
+
+  <section class="section text-center">
+    <h2 class="h3">Questions about a specific piece?</h2>
+    <p class="lead" style="margin: 12px auto 24px; max-width: 46ch;">Our concierge answers instantly from our help centre — and opens a ticket for anything it can't.</p>
+    <div class="row" style="justify-content: center;">
+      <button class="btn btn-primary" type="button" data-ask="How do you authenticate a watch?">Ask the assistant</button>
+      <a class="btn btn-outline" href="{% url 'support:faq' %}">Read the FAQ</a>
+    </div>
+  </section>
+</div>
+{% endblock %}

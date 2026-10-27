@@ -1,0 +1,10 @@
+{% load static %}
+<div class="auth-visual" aria-hidden="true">
+  <span class="blob blob-1"></span>
+  <span class="blob blob-3"></span>
+  <img src="{% static 'img/hero-watch.svg' %}" alt="" width="600" height="600">
+  <div class="tagline">
+    <span class="logo logo-sm" style="color: var(--color-paper);">{% include "partials/logo.html" %}</span>
+    <h2>{{ tagline }}</h2>
+  </div>
+</div>

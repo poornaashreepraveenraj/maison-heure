@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load static store_extras %}
+{% block title %}Checkout — delivery | Maison Heure{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="page-head" style="padding-bottom: 0;"><h1>Checkout</h1></div>
+  {% include "partials/checkout_steps.html" %}
+  <div class="checkout-layout">
+    <form class="form-panel" method="post">
+      {% csrf_token %}
+      <fieldset>
+        <legend class="title-sm" style="margin-bottom: 20px;">Delivery method</legend>
+        <div class="option-cards">
+          {% for key, option in options.items %}
+            <label class="option-card">
+              <span class="row" style="flex-wrap: nowrap;">
+                <input type="radio" name="delivery" value="{{ key }}"{% if form.delivery.value == key %} checked{% endif %} required>
+                <span><strong style="font-weight: 500;">{{ option.label }}</strong><br><span class="caption">{{ option.days }} · fully insured · OTP on delivery</span></span>
+              </span>
+              {% price option.price %}
+            </label>
+          {% endfor %}
+        </div>
+        {{ form.delivery.errors }}
+      </fieldset>
+      <div class="row-between" style="margin-top: 24px;">
+        <a class="btn-text" href="{% url 'orders:checkout' %}">← Shipping</a>
+        <button class="btn btn-primary" type="submit">Continue to payment</button>
+      </div>
+    </form>
+    {% include "orders/_summary.html" %}
+  </div>
+</div>
+{% endblock %}

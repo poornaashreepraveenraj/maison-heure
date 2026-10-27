@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Checkout — shipping | Maison Heure{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="page-head" style="padding-bottom: 0;"><h1>Checkout</h1></div>
+  {% include "partials/checkout_steps.html" %}
+  <div class="checkout-layout">
+    <form class="form-panel" method="post" novalidate data-checkout-form>
+      {% csrf_token %}
+      <h2 class="title-sm" style="margin-bottom: 20px;">Shipping address</h2>
+      {% if form.non_field_errors %}<div class="errorlist">{{ form.non_field_errors }}</div>{% endif %}
+      <div class="field-row">
+        {% include "partials/form_field.html" with field=form.name %}
+        {% include "partials/form_field.html" with field=form.phone %}
+      </div>
+      {% include "partials/form_field.html" with field=form.email %}
+      {% include "partials/form_field.html" with field=form.line1 %}
+      {% include "partials/form_field.html" with field=form.line2 %}
+      <div class="field-row">
+        {% include "partials/form_field.html" with field=form.city %}
+        {% include "partials/form_field.html" with field=form.state %}
+      </div>
+      {% include "partials/form_field.html" with field=form.pincode %}
+      {% include "partials/form_field.html" with field=form.save_address %}
+      <div class="row-between" style="margin-top: 24px;">
+        <a class="btn-text" href="{% url 'cart:bag' %}">← Back to bag</a>
+        <button class="btn btn-primary" type="submit">Continue to delivery</button>
+      </div>
+    </form>
+    {% include "orders/_summary.html" %}
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{% static 'js/checkout.js' %}" defer></script>{% endblock %}

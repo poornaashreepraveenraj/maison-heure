@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load static store_extras %}
+{% block title %}Order {{ order.reference }} | Maison Heure{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="page-head">
+    <span class="eyebrow">Order tracking</span>
+    <h1>{{ order.reference }}</h1>
+    <p>Placed {{ order.created_at|date:"j M Y, H:i" }} · <span class="badge{% if order.status == 'delivered' %} badge-success{% endif %}" data-order-status>{{ order.get_status_display }}</span> · <span class="timeline-live"><span class="live-dot" aria-hidden="true"></span>Live updates</span></p>
+  </div>
+  <div class="checkout-layout">
+    <section class="form-panel" aria-labelledby="timeline-title">
+      <h2 class="title-sm" id="timeline-title" style="margin-bottom: 24px;">Timeline</h2>
+      {% if order.status == "cancelled" %}
+        <p class="badge badge-danger">This order was cancelled.</p>
+      {% else %}
+      <ol class="timeline" data-timeline data-status="{{ order.status }}" aria-live="polite">
+        {% for step in timeline %}
+          <li class="{% if step.done %}is-done{% endif %}{% if step.status == 'delivered' %} is-delivered{% endif %}" style="--i: {{ forloop.counter0 }}"{% if step.current %} aria-current="step"{% endif %}>
+            <span class="dot"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l4 4 10-10"/></svg></span>
+            <div class="step-label">{{ step.label }}</div>
+            <div class="step-time">{% if step.at %}{{ step.at|date:"D j M, H:i" }}{% elif step.done %}Completed{% else %}Pending{% endif %}</div>
+          </li>
+        {% endfor %}
+      </ol>
+      {% endif %}
+      <div class="grid grid-2" style="gap: 16px; margin-top: 8px;">
+        <div class="panel small"><span class="eyebrow">Courier</span><p style="margin-top: 6px;">{{ order.courier|default:"Assigned at dispatch" }}<br>AWB {{ order.tracking_number|default:"—" }}</p></div>
+        <div class="panel small"><span class="eyebrow">Estimated delivery</span><p style="margin-top: 6px;">{{ order.estimated_delivery|date:"D j M Y"|default:"—" }}<br>{{ order.get_delivery_method_display }}</p></div>
+      </div>
+    </section>
+    <aside class="summary" aria-label="Order details">
+      <h2 class="title-sm">Details</h2>
+      <ul class="summary-items">
+        {% for item in order.items.all %}
+          <li>
+            <img src="{% if item.watch.primary_image %}{{ item.watch.primary_image.url }}{% else %}{% static 'img/watch-placeholder.svg' %}{% endif %}" alt="" width="56" height="56">
+            <span><strong style="font-weight: 500;">{{ item.watch.title }}</strong><br>{% price item.price_at_purchase %}</span>
+          </li>
+        {% endfor %}
+      </ul>
+      <div class="summary-line"><span>Payment</span><span>{{ order.get_payment_status_display }}</span></div>
+      <div class="summary-total"><span>Total</span>{% price order.total %}</div>
+      <div class="small">
+        <span class="eyebrow">Ship to</span>
+        <p style="margin-top: 4px;">{{ order.ship_name }}<br>{% for line in order.address_lines %}{{ line }}<br>{% endfor %}</p>
+      </div>
+      <button class="btn btn-ghost" type="button" data-ask="Where is my order {{ order.reference }}?">Ask the assistant</button>
+    </aside>
+  </div>
+</div>
+{% endblock %}

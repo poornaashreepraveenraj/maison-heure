@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% load static store_extras %}
+{% block title %}Your bag | Maison Heure{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="page-head">
+    <h1>Your bag</h1>
+    <p>Each watch is one of a kind. When you start checkout we hold your pieces for 15 minutes.</p>
+  </div>
+
+  {% if unavailable %}
+    <div class="panel" role="alert" style="margin-bottom: 24px; border-left: 3px solid var(--color-danger);">
+      <strong>Error 470 — Watch already sold.</strong>
+      {% for watch in unavailable %}{{ watch.title }}{% if not forloop.last %}, {% endif %}{% endfor %}
+      {{ unavailable|length|pluralize:"was,were" }} bought or reserved by another collector. Remove {{ unavailable|length|pluralize:"it,them" }} to continue.
+      <button class="btn-text" type="button" data-ask="What does error 470 mean?">What does this mean?</button>
+    </div>
+  {% endif %}
+
+  {% if watches or unavailable %}
+  <div class="bag-layout">
+    <ul class="bag-items">
+      {% for watch in watches %}
+        <li class="bag-item">
+          <a href="{{ watch.get_absolute_url }}"><img src="{% if watch.primary_image %}{{ watch.primary_image.url }}{% else %}{% static 'img/watch-placeholder.svg' %}{% endif %}" alt="{{ watch.title }}" width="110" height="110" loading="lazy"></a>
+          <div class="stack-sm">
+            <span class="eyebrow">{{ watch.brand.name }}</span>
+            <a href="{{ watch.get_absolute_url }}" style="text-decoration: none; font-weight: 500;">{{ watch.model }}</a>
+            <div class="caption">Ref. {{ watch.reference_number }} · {{ watch.get_condition_display }}{% if watch.box_and_papers %} · Box &amp; papers{% endif %}</div>
+          </div>
+          <div class="stack-sm" style="text-align: right;">
+            {% price watch.price_inr %}
+            <form method="post" action="{% url 'cart:remove' watch.pk %}">{% csrf_token %}<button class="btn-text" type="submit">Remove</button></form>
+          </div>
+        </li>
+      {% endfor %}
+      {% for watch in unavailable %}
+        <li class="bag-item is-unavailable">
+          <img src="{% if watch.primary_image %}{{ watch.primary_image.url }}{% else %}{% static 'img/watch-placeholder.svg' %}{% endif %}" alt="{{ watch.title }}" width="110" height="110" loading="lazy">
+          <div class="stack-sm">
+            <span class="eyebrow">{{ watch.brand.name }}</span>
+            <span style="font-weight: 500;">{{ watch.model }}</span>
+            <span class="badge badge-danger">No longer available (470)</span>
+          </div>
+          <form method="post" action="{% url 'cart:remove' watch.pk %}">{% csrf_token %}<button class="btn-text" type="submit">Remove</button></form>
+        </li>
+      {% endfor %}
+    </ul>
+
+    <aside class="summary" aria-label="Order summary">
+      <h2 class="title-sm">Summary</h2>
+      <div class="summary-line"><span>Subtotal</span>{% price totals.subtotal %}</div>
+      {% if totals.discount %}<div class="summary-line"><span>Promo {{ totals.promo_code }}</span><span>−{% price totals.discount "" %}</span></div>{% endif %}
+      <div class="summary-line"><span>Insured shipping (standard)</span>{% price totals.shipping %}</div>
+      <div class="summary-line"><span>GST (18% on dealer margin)</span>{% price totals.tax %}</div>
+      <div class="summary-total"><span>Total</span>{% price totals.total %}</div>
+      <form class="promo-form" method="post" action="{% url 'cart:promo' %}">
+        {% csrf_token %}
+        <label class="visually-hidden" for="promo">Promo code</label>
+        <input class="input" id="promo" name="code" value="{{ promo_code }}" placeholder="Promo code (try WELCOME10)" autocapitalize="characters">
+        <button class="btn btn-ghost" type="submit">Apply</button>
+      </form>
+      {% if watches and not unavailable %}
+        <a class="btn btn-primary btn-block" href="{% url 'orders:checkout' %}">Checkout</a>
+      {% else %}
+        <button class="btn btn-block" type="button" disabled>Checkout</button>
+      {% endif %}
+      <p class="caption">Shipping method can be changed at checkout. Prices are always re-checked on our server.</p>
+    </aside>
+  </div>
+  {% else %}
+    <div class="empty-state">
+      <h2 class="h3">Your bag is empty</h2>
+      <p>Browse authenticated pieces from Rolex, Omega, Cartier, Patek Philippe, Audemars Piguet and Tudor.</p>
+      <a class="btn btn-primary" href="{% url 'store:shop' %}">Shop the collection</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

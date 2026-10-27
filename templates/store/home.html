@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+{% load static %}
+{% block body_class %}is-home{% endblock %}
+{% block content %}
+
+{# 1. Hero #}
+<section class="hero" aria-labelledby="hero-title">
+  <span class="blob blob-1" aria-hidden="true"></span>
+  <span class="blob blob-2" aria-hidden="true"></span>
+  <span class="blob blob-3" aria-hidden="true"></span>
+  <div class="hero-inner container">
+    <div class="hero-content" data-hero-content>
+      <div class="hero-watch" data-tilt>
+        {% include "partials/live_watch.html" %}
+      </div>
+      <p class="hero-time"><span class="live-dot" aria-hidden="true"></span><span data-live-time>Live</span> · your local time</p>
+      <h1 id="hero-title" class="display hero-title">
+        <span class="word" style="--i: 0">Time,</span>
+        <span class="word" style="--i: 1">Pre-Loved.</span>
+      </h1>
+      <p class="hero-sub">Authenticated luxury watches, ready for their next chapter.</p>
+    </div>
+  </div>
+  <div class="hero-container">
+    <a class="btn btn-ghost on-dark hero-cta" href="{% url 'store:shop' %}">Shop the collection →</a>
+  </div>
+  <span class="scroll-cue" aria-hidden="true"></span>
+  <div class="ticker" aria-label="Demo market index, sample data">
+    <span class="ticker-label"><span class="live-dot" aria-hidden="true"></span>Market index · demo</span>
+    <div class="ticker-track" aria-hidden="true" data-ticker>
+      {% for i in "12" %}
+        <span data-tick="2.1">Rolex Submariner <b class="up">▲2.1%</b></span>
+        <span data-tick="-0.4">Omega Speedmaster <b class="down">▼0.4%</b></span>
+        <span data-tick="3.8">Patek Philippe Nautilus <b class="up">▲3.8%</b></span>
+        <span data-tick="1.2">Audemars Piguet Royal Oak <b class="up">▲1.2%</b></span>
+        <span data-tick="0.6">Cartier Tank <b class="up">▲0.6%</b></span>
+        <span data-tick="-0.9">Tudor Black Bay <b class="down">▼0.9%</b></span>
+        <span data-tick="1.7">Rolex Daytona <b class="up">▲1.7%</b></span>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{# 2. Trust strip #}
+<section class="trust-strip" aria-label="Our promises">
+  <ul class="container trust-list">
+    <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v6c0 4-3 7.5-7 9-4-1.5-7-5-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>Authenticated</li>
+    <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="18" r="1.6"/><circle cx="17" cy="18" r="1.6"/></svg>Insured shipping</li>
+    <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 3-6.2"/><path d="M4 4v4h4"/></svg>14-day returns</li>
+    <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>12-month warranty</li>
+  </ul>
+</section>
+
+{# 3. New in — brand tabs filter the grid without reloading #}
+<section class="section" id="new-in" aria-labelledby="new-in-title">
+  <div class="container">
+    {% include "partials/section_head.html" with eyebrow="New in" title="Fresh from the vault" sub="Every piece inspected, regulated and photographed in-house before it reaches you." heading_id="new-in-title" %}
+    <div class="tabs" role="tablist" aria-label="Filter by brand" data-tabs data-api-url="{% url 'store:api_watches' %}" data-target="new-in-grid">
+      <button class="tab" role="tab" type="button" aria-selected="true" aria-controls="new-in-grid" data-brand="all">All</button>
+      {% for brand in tab_brands %}
+        <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="new-in-grid" data-brand="{{ brand.slug }}">{{ brand.name }}</button>
+      {% endfor %}
+      <span class="tab-indicator" aria-hidden="true"></span>
+    </div>
+    <div class="currency-bar reveal" style="margin-bottom: 28px;">
+      <span class="label">Show prices in</span>
+      <div class="currency-options" role="group" aria-label="Display currency" data-currency-buttons>
+        {% for code in currencies %}<button type="button" data-currency="{{ code }}" aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}">{{ code }}</button>{% endfor %}
+      </div>
+      <span class="rates-status" data-rates-status aria-live="polite">Loading rates…</span>
+    </div>
+    <div class="product-grid" id="new-in-grid" role="tabpanel" aria-live="polite">
+      {% include "store/_cards.html" with watches=new_in %}
+    </div>
+    <div class="load-more-wrap"><a class="btn btn-outline" href="{% url 'store:shop' %}">View all watches</a></div>
+  </div>
+</section>
+
+{# Shop by wearer: Men's / Women's / Unisex #}
+<section class="section" aria-labelledby="wearer-title" style="padding-top: 0;">
+  <div class="container">
+    {% include "partials/section_head.html" with eyebrow="Shop by wearer" title="For him, for her, for anyone" sub="Unisex pieces appear in both the men's and women's edits." heading_id="wearer-title" %}
+    <div class="style-tiles">
+      {% for wearer in wearers %}
+        <a class="style-tile reveal" href="{% url 'store:shop' %}?gender={{ wearer.value }}" style="--reveal-delay: {{ forloop.counter0 }}00ms">
+          {% if wearer.sample and wearer.sample.primary_image %}<img{% if wearer.sample.primary_image.is_photo %} class="is-photo"{% endif %} src="{{ wearer.sample.primary_image.url }}" alt="" loading="lazy" width="600" height="600">{% endif %}
+          <span class="label">{{ wearer.count }} watch{{ wearer.count|pluralize:"es" }}</span>
+          <h3>{{ wearer.label }}</h3>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{# 4. Shop by style #}
+<section class="section section-band" aria-labelledby="styles-title">
+  <div class="container">
+    {% include "partials/section_head.html" with eyebrow="Shop by style" title="Find your register" heading_id="styles-title" %}
+    <div class="style-tiles">
+      {% for style in styles %}
+        <a class="style-tile reveal" href="{% url 'store:shop' %}?style={{ style.value }}" style="--reveal-delay: {{ forloop.counter0 }}00ms">
+          {% if style.sample and style.sample.primary_image %}<img{% if style.sample.primary_image.is_photo %} class="is-photo"{% endif %} src="{{ style.sample.primary_image.url }}" alt="" loading="lazy" width="600" height="600">{% endif %}
+          <span class="label">{{ style.count }} watch{{ style.count|pluralize:"es" }}</span>
+          <h3>{{ style.label }}</h3>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{# 5. What's my watch worth? (client-side estimate) #}
+<section class="section" aria-labelledby="estimator-title">
+  <div class="container">
+    {% include "partials/section_head.html" with eyebrow="Thinking of selling?" title="What's my watch worth?" sub="A quick, indicative range based on brand, age, condition and completeness. A specialist confirms the final offer after inspection." heading_id="estimator-title" %}
+    <form class="estimator reveal" data-estimator action="{% url 'sell:sell' %}" method="get">
+      <div class="form-panel">
+        <div class="field-row">
+          <div class="field">
+            <label for="est-brand">Brand</label>
+            <select id="est-brand" name="brand" data-est-brand>
+              {% for brand in brands %}<option value="{{ brand.name }}" data-slug="{{ brand.slug }}">{{ brand.name }}</option>{% endfor %}
+            </select>
+          </div>
+          <div class="field">
+            <label for="est-model">Model <span class="muted">(optional)</span></label>
+            <input id="est-model" name="model" type="text" placeholder="e.g. Submariner">
+          </div>
+        </div>
+        <div class="field">
+          <label for="est-year">Year: <span class="year-out" data-est-year-out>2018</span></label>
+          <input id="est-year" name="year" type="range" min="1960" max="{% now 'Y' %}" value="2018" data-est-year>
+        </div>
+        <fieldset class="field">
+          <legend>Condition</legend>
+          <div class="option-cards" style="grid-template-columns: repeat(2, 1fr);">
+            <label class="option-card"><span>Unworn</span><input type="radio" name="condition" value="unworn"></label>
+            <label class="option-card"><span>Excellent</span><input type="radio" name="condition" value="excellent" checked></label>
+            <label class="option-card"><span>Very good</span><input type="radio" name="condition" value="very_good"></label>
+            <label class="option-card"><span>Good</span><input type="radio" name="condition" value="good"></label>
+          </div>
+        </fieldset>
+        <div class="field">
+          <label class="switch"><input type="checkbox" name="papers" value="1" data-est-papers checked> <span>Box &amp; papers included</span></label>
+        </div>
+      </div>
+      <div class="estimator-result" aria-live="polite">
+        <span class="eyebrow">Indicative range</span>
+        <span class="estimate-range"><span data-est-low data-price-inr="0">—</span> – <span data-est-high data-price-inr="0">—</span></span>
+        <p class="small" style="color: var(--color-linen);">Not a guaranteed offer or investment advice. Prices move with the market.</p>
+        <button class="btn btn-ghost on-dark" type="submit">Sell with us →</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+{# 6. Authentication process #}
+<section class="section section-band" aria-labelledby="process-title">
+  <div class="container">
+    {% include "partials/section_head.html" with eyebrow="Our process" title="Four steps to certified" sub="No watch is listed until it has passed every stage." heading_id="process-title" %}
+    <div class="process" data-process>
+      <div class="process-line" aria-hidden="true"><span data-process-fill></span></div>
+      <div class="process-step reveal"><span class="process-num">01</span><h3>Inspection</h3><p>Case, dial, hands, serials and bracelet are examined under magnification against reference data.</p></div>
+      <div class="process-step reveal" style="--reveal-delay: 60ms"><span class="process-num">02</span><h3>Movement check</h3><p>We open the caseback and measure rate, amplitude and beat error on a timegrapher.</p></div>
+      <div class="process-step reveal" style="--reveal-delay: 120ms"><span class="process-num">03</span><h3>Polishing</h3><p>Only on request — most collectors prefer honest, unpolished cases, and so do we.</p></div>
+      <div class="process-step reveal" style="--reveal-delay: 180ms"><span class="process-num">04</span><h3>Certified</h3><p>A signed report, photographs and our 12-month warranty travel with every watch.</p></div>
+    </div>
+  </div>
+</section>
+
+{# 7. Reviews + press #}
+<section class="section reviews" aria-labelledby="reviews-title">
+  <div class="container">
+    {% include "partials/section_head.html" with eyebrow="Collectors say" title="Trusted across India" heading_id="reviews-title" %}
+    <div class="review-track" data-carousel tabindex="0" aria-label="Customer reviews (sample)">
+      <article class="review">
+        <div class="stars" aria-label="5 out of 5 stars">{% include "partials/stars.html" %}<span class="rating">5.0</span></div>
+        <blockquote>“The Speedmaster arrived exactly as described, with a full timegrapher report. Packaging was discreet and the OTP delivery felt secure.”</blockquote>
+        <footer>Arjun M., Bengaluru</footer>
+      </article>
+      <article class="review">
+        <div class="stars" aria-label="5 out of 5 stars">{% include "partials/stars.html" %}<span class="rating">5.0</span></div>
+        <blockquote>“I consigned my Datejust and had an offer within two days. Transparent pricing and no pressure at all.”</blockquote>
+        <footer>Meera S., Mumbai</footer>
+      </article>
+      <article class="review">
+        <div class="stars" aria-label="4.8 out of 5 stars">{% include "partials/stars.html" %}<span class="rating">4.8</span></div>
+        <blockquote>“The assistant answered my warranty question instantly and opened a ticket for the rest. Great service.”</blockquote>
+        <footer>Kabir R., New Delhi</footer>
+      </article>
+      <article class="review">
+        <div class="stars" aria-label="5 out of 5 stars">{% include "partials/stars.html" %}<span class="rating">5.0</span></div>
+        <blockquote>“My first vintage piece. They explained the patina, the service history and why it was priced the way it was.”</blockquote>
+        <footer>Ananya P., Hyderabad</footer>
+      </article>
+      <article class="review">
+        <div class="stars" aria-label="4.9 out of 5 stars">{% include "partials/stars.html" %}<span class="rating">4.9</span></div>
+        <blockquote>“Tracking showed every step from authenticated to delivered. Exactly what you want for a watch of this value.”</blockquote>
+        <footer>Rohan D., Pune</footer>
+      </article>
+    </div>
+    <div class="carousel-controls">
+      <button class="icon-btn" type="button" data-carousel-prev aria-label="Previous review"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <button class="icon-btn" type="button" data-carousel-next aria-label="Next review"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+    </div>
+    <p class="caption text-center" style="margin-top: 12px;">Sample reviews for this demo project.</p>
+  </div>
+</section>
+
+<section class="trust-strip" aria-label="Press (sample)">
+  <div class="container">
+    <p class="eyebrow text-center" style="margin-bottom: 24px;">As featured in · sample press</p>
+    <ul class="trust-list">
+      <li>The Horology Review</li>
+      <li>Dial &amp; Case</li>
+      <li>Collector Quarterly</li>
+      <li>Wrist Notes</li>
+    </ul>
+  </div>
+</section>
+
+{# 8. Newsletter #}
+<section class="section newsletter-band" aria-labelledby="news-title">
+  <div class="container container-narrow">
+    {% include "partials/section_head.html" with eyebrow="The Maison Heure letter" title="First look at new arrivals" sub="One email a fortnight. New pieces go to subscribers 24 hours before the site." heading_id="news-title" %}
+    <form class="newsletter" data-newsletter novalidate>
+      <label class="visually-hidden" for="newsletter-email-2">Email address</label>
+      <input class="input" id="newsletter-email-2" type="email" name="email" placeholder="Your email" autocomplete="email" required>
+      <button class="btn btn-primary" type="submit">Subscribe</button>
+    </form>
+    <p class="caption text-center" data-newsletter-status aria-live="polite" style="margin-top: 8px;"></p>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,6 @@
+{% extends "errors/error_base.html" %}
+{% block code %}429{% endblock %}{% block heading %}Too many requests{% endblock %}
+{% block code_display %}429{% endblock %}
+{% block message_title %}Easy — one tick at a time.{% endblock %}
+{% block message %}You've made a lot of {{ what|default:"requests" }} in a short time, so we've paused them to protect your account. Please wait a few minutes and try again.{% endblock %}
+{% block ask %}What does error 429 mean?{% endblock %}

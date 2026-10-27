@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load store_extras %}
+{% block title %}My orders | Maison Heure{% endblock %}
+{% block content %}
+<div class="container container-narrow">
+  <div class="page-head">
+    <span class="eyebrow">Account</span>
+    <h1>My orders</h1>
+  </div>
+  {% if orders %}
+    <div style="border-top: 1px solid var(--hairline);">
+      {% for order in orders %}
+        <a class="order-row" href="{{ order.get_absolute_url }}">
+          <span><strong style="font-weight: 500;">{{ order.reference }}</strong><br><span class="caption">{% for item in order.items.all %}{{ item.watch.title }}{% if not forloop.last %}, {% endif %}{% endfor %}</span></span>
+          <span class="caption">{{ order.created_at|date:"j M Y" }}</span>
+          <span class="stack-sm" style="text-align: right;">{% price order.total %}<br><span class="badge{% if order.status == 'delivered' %} badge-success{% endif %}">{{ order.get_status_display }}</span></span>
+        </a>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-state">
+      <h2 class="h3">No orders yet</h2>
+      <p>When you buy a watch it will appear here with live tracking.</p>
+      <a class="btn btn-primary" href="{% url 'store:shop' %}">Shop the collection</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

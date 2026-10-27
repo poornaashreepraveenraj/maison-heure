@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Contact | Maison Heure{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="page-head">
+    <span class="eyebrow">Contact</span>
+    <h1>Talk to a specialist</h1>
+    <p>We reply within one business day. For instant answers, try the concierge in the corner.</p>
+  </div>
+  <div class="checkout-layout">
+    <form class="form-panel" method="post" novalidate>
+      {% csrf_token %}
+      <div class="field-row">
+        {% include "partials/form_field.html" with field=form.name %}
+        {% include "partials/form_field.html" with field=form.email %}
+      </div>
+      {% include "partials/form_field.html" with field=form.subject %}
+      {% include "partials/form_field.html" with field=form.message %}
+      <button class="btn btn-primary" type="submit" style="margin-top: 24px;">Send message</button>
+    </form>
+    <aside class="summary small">
+      <h2 class="title-sm">Showroom</h2>
+      <p>By appointment only<br>Mumbai, Maharashtra<br>Mon–Sat, 11:00–19:00 IST</p>
+      <p>Quoting a support ticket? Put its reference (e.g. MH-T-00001) in the subject.</p>
+    </aside>
+  </div>
+</div>
+{% endblock %}

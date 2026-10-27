@@ -1,0 +1,10 @@
+{% for watch in watches %}
+  {% include "partials/product_card.html" %}
+{% empty %}
+  <div class="empty-state" style="grid-column: 1 / -1;">
+    <h3>No watches match</h3>
+    <p>Try removing a filter or widening the price range — new pieces arrive every week.</p>
+    <a class="btn btn-outline" href="{% url 'store:shop' %}">Clear all filters</a>
+  </div>
+{% endfor %}
+{% if page %}<template data-page-info data-total="{{ page.paginator.count }}" data-heading="{{ heading }}" data-has-next="{{ page.has_next|yesno:'1,0' }}" data-next="{% if page.has_next %}{{ page.next_page_number }}{% endif %}"></template>{% endif %}

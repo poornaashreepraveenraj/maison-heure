@@ -1,0 +1,18 @@
+{% load static store_extras %}
+<aside class="summary" aria-label="Order summary">
+  <h2 class="title-sm">Your order</h2>
+  <ul class="summary-items">
+    {% for watch in watches %}
+      <li>
+        <img src="{% if watch.primary_image %}{{ watch.primary_image.url }}{% else %}{% static 'img/watch-placeholder.svg' %}{% endif %}" alt="" width="56" height="56">
+        <span><strong style="font-weight: 500;">{{ watch.title }}</strong><br>{% price watch.price_inr %}</span>
+      </li>
+    {% endfor %}
+  </ul>
+  <div class="summary-line"><span>Subtotal</span>{% price totals.subtotal %}</div>
+  {% if totals.discount %}<div class="summary-line"><span>Promo {{ totals.promo_code }}</span><span>−{% price totals.discount "" %}</span></div>{% endif %}
+  <div class="summary-line"><span>Insured shipping</span>{% price totals.shipping %}</div>
+  <div class="summary-line"><span>GST (18% on dealer margin)</span>{% price totals.tax %}</div>
+  <div class="summary-total"><span>Total</span>{% price totals.total %}</div>
+  {% if held_until %}<p class="hold-note" data-hold-until="{{ held_until|date:'c' }}"><span class="live-dot" aria-hidden="true"></span>Held for you for <strong class="hold-countdown" data-hold-countdown>15:00</strong> — until {{ held_until|time:"H:i" }}.</p>{% endif %}
+</aside>

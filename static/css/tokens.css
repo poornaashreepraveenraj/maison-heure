@@ -1,0 +1,73 @@
+/* Maison Heure design tokens — "Noir & Champagne".
+   Warm ivory pages, noir hero and footer, champagne gold for interactive
+   elements and dial accents, bordeaux for status badges. No box-shadows. */
+:root {
+  /* Accent: champagne gold (buttons, links, focus, dial pips) */
+  --color-champagne: #c8a45d;
+  --color-champagne-dark: #b08d45;  /* hover */
+  --color-champagne-light: #e6d3a6; /* soft highlights on dark */
+  --color-champagne-deep: #8a6a2e;  /* focus rings / text-strength gold (4.5:1 on ivory) */
+  --color-bordeaux: #6e1f2b;        /* Sold / New in badges */
+
+  /* Neutrals */
+  --color-noir: #0f0e0c;            /* primary text, hero, footer */
+  --color-noir-soft: #1b1916;       /* raised panels on dark */
+  --color-umber: #3a342d;           /* secondary text */
+  --color-taupe: #6f6457;           /* muted text, captions (5:1 on ivory) */
+  --color-linen: #ddd2bf;           /* borders, dividers, input outlines */
+  --color-sand: #ede4d3;            /* bands, image wells */
+  --color-ivory: #f6f1e7;           /* page canvas */
+  --color-paper: #fffdf8;           /* cards, inputs, text on dark */
+  --color-onyx: #000000;
+
+  /* Status */
+  --color-success: #3d7a50;
+  --color-danger: #a3302c;
+  --color-express: #5a31f4;
+
+  --surface-canvas: var(--color-ivory);
+  --surface-band: var(--color-sand);
+  --surface-footer: var(--color-noir);
+  --hairline: rgba(15, 14, 12, 0.12);
+  --hairline-strong: rgba(15, 14, 12, 0.85);
+  --hairline-gold: rgba(200, 164, 93, 0.35);
+
+  /* Typography */
+  --font-display: "Jost", "Futura", "Century Gothic", sans-serif;
+  --font-body: "Poppins", "Helvetica Neue", Arial, sans-serif;
+  --font-label: "Cabin", "Helvetica Neue", Arial, sans-serif;
+
+  --text-caption: 12px;    --leading-caption: 1.5;   --tracking-caption: 0.77px;
+  --text-body-sm: 14px;    --leading-body-sm: 1.42;
+  --text-body: 16px;
+  --text-body-lg: 17px;    --leading-body-lg: 1.5;
+  --text-subheading: 21px; --leading-subheading: 1.38;
+  --text-heading-sm: 24px; --leading-heading-sm: 1.38;
+  --text-heading: 34px;    --leading-heading: 1.37;  --tracking-heading: 3.06px;
+  --text-heading-lg: 42px; --leading-heading-lg: 1.25; --tracking-heading-lg: 3.78px;
+  --text-display: 68px;    --leading-display: 1.2;   --tracking-display: 6.12px;
+  --tracking-label: 0.09em;
+
+  /* Spacing scale */
+  --space-4: 4px;   --space-5: 5px;   --space-6: 6px;   --space-8: 8px;
+  --space-10: 10px; --space-11: 11px; --space-12: 12px; --space-15: 15px;
+  --space-16: 16px; --space-20: 20px; --space-24: 24px; --space-36: 36px;
+  --space-50: 50px; --space-72: 72px; --space-113: 113px; --space-166: 166px;
+
+  --section-gap: 80px;
+  --card-padding: 24px;
+  --element-gap: 10px;
+  --container: 1200px;
+  --gutter: 16px;
+  --header-height: 64px;
+
+  /* Shape — 3px everywhere, pills only for chips */
+  --radius: 3px;
+  --radius-pill: 100px;
+
+  /* Motion */
+  --ease-out: cubic-bezier(.2, .8, .2, 1);
+  --ease-spring: cubic-bezier(.34, 1.4, .64, 1);
+  --duration-fast: 150ms;
+  --duration-reveal: 600ms;
+}

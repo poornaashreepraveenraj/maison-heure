@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Sign in | Maison Heure{% endblock %}
+{% block content %}
+<div class="auth-split">
+  {% include "partials/auth_visual.html" with tagline="Welcome back to the vault." %}
+  <div class="auth-form-wrap">
+    <form class="auth-form" method="post" novalidate>
+      {% csrf_token %}
+      <span class="eyebrow">Account</span>
+      <h1>Sign in</h1>
+      <p class="muted small" style="margin-bottom: 24px;">Sign in to check out, track orders and save watches to your wishlist.</p>
+      {% if form.non_field_errors %}<div class="message error" role="alert" style="margin-bottom: 16px;">{{ form.non_field_errors|join:" " }}</div>{% endif %}
+      {% include "partials/form_field.html" with field=form.username %}
+      {% include "partials/form_field.html" with field=form.password %}
+      <input type="hidden" name="next" value="{{ next }}">
+      <button class="btn btn-primary" type="submit">Sign in</button>
+      <p class="auth-switch">New to Maison Heure? <a class="link" href="{% url 'accounts:register' %}{% if next %}?next={{ next|urlencode }}{% endif %}">Create an account</a></p>
+    </form>
+  </div>
+</div>
+{% endblock %}

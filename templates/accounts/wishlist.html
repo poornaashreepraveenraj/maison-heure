@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Wishlist | Maison Heure{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="page-head">
+    <span class="eyebrow">My account</span>
+    <h1>Wishlist</h1>
+    <p>Watches you're keeping an eye on. Each one is unique — when it's gone, it's gone.</p>
+  </div>
+  {% if watches %}
+    <div class="product-grid">{% include "store/_cards.html" %}</div>
+  {% else %}
+    <div class="empty-state">
+      <h2 class="h3">Nothing saved yet</h2>
+      <p>Tap the heart on any watch page to save it here.</p>
+      <a class="btn btn-primary" href="{% url 'store:shop' %}">Browse watches</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% load store_extras %}
+{% block title %}My account | Maison Heure{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="page-head">
+    <span class="eyebrow">My account</span>
+    <h1>Welcome, {{ user.username }}</h1>
+    <p>{{ user.email }}</p>
+  </div>
+
+  <div class="stat-cards">
+    <a class="stat-card" href="{% url 'orders:my_orders' %}"><span class="label">Orders</span><span class="num">{{ order_count }}</span><span class="caption">View all orders →</span></a>
+    <a class="stat-card" href="{% url 'accounts:wishlist' %}"><span class="label">Wishlist</span><span class="num">{{ wishlist_count }}</span><span class="caption">Saved watches →</span></a>
+    <a class="stat-card" href="{% url 'sell:sell' %}"><span class="label">Consignments</span><span class="num">{{ consignments|length }}</span><span class="caption">Sell a watch →</span></a>
+  </div>
+
+  <div class="grid grid-2 section" style="padding-bottom: 0;">
+    <section aria-labelledby="recent-title">
+      <h2 class="title-sm" id="recent-title" style="margin-bottom: 12px;">Recent orders</h2>
+      {% for order in recent_orders %}
+        <a class="order-row" href="{{ order.get_absolute_url }}" style="grid-template-columns: 1fr auto;">
+          <span><strong style="font-weight: 500;">{{ order.reference }}</strong><br><span class="caption">{{ order.created_at|date:"j M Y" }} · {% price order.total "" %}</span></span>
+          <span class="badge{% if order.status == 'delivered' %} badge-success{% endif %}">{{ order.get_status_display }}</span>
+        </a>
+      {% empty %}
+        <p class="muted">No orders yet. <a class="link" href="{% url 'store:shop' %}">Start shopping</a>.</p>
+      {% endfor %}
+    </section>
+
+    <section aria-labelledby="address-title">
+      <h2 class="title-sm" id="address-title" style="margin-bottom: 12px;">Saved addresses</h2>
+      {% for address in addresses %}
+        <div class="panel small" style="margin-bottom: 10px;">
+          {% if address.is_default %}<span class="badge" style="float: right;">Default</span>{% endif %}
+          {{ address.name }}<br>{{ address.line1 }}{% if address.line2 %}, {{ address.line2 }}{% endif %}<br>{{ address.city }}, {{ address.state }} {{ address.pincode }}
+        </div>
+      {% empty %}
+        <p class="muted">Tick “Save this address” at checkout to see it here.</p>
+      {% endfor %}
+    </section>
+  </div>
+
+  <section class="section" aria-labelledby="consign-title" style="padding-bottom: 0;">
+    <h2 class="title-sm" id="consign-title" style="margin-bottom: 12px;">Consignment submissions</h2>
+    {% if consignments %}
+      <div class="table-scroll">
+        <table class="data-table">
+          <thead><tr><th>Watch</th><th>Year</th><th>Asking price</th><th>Submitted</th><th>Status</th></tr></thead>
+          <tbody>
+            {% for c in consignments %}
+              <tr><td>{{ c.brand }} {{ c.model }}</td><td>{{ c.year }}</td><td>{% price c.asking_price %}</td><td>{{ c.created_at|date:"j M Y" }}</td><td><span class="badge">{{ c.get_status_display }}</span></td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p class="muted">You haven't submitted a watch yet. <a class="link" href="{% url 'sell:sell' %}">Sell or consign one</a>.</p>
+    {% endif %}
+  </section>
+
+  <form method="post" action="{% url 'accounts:logout' %}" class="section" style="padding-bottom: 0;">
+    {% csrf_token %}
+    <button class="btn btn-ghost" type="submit">Sign out</button>
+  </form>
+</div>
+{% endblock %}

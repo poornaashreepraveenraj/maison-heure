@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 64" role="img" aria-label="Maison Heure">
+  <g transform="translate(8 8)">
+    <circle cx="24" cy="24" r="22.25" fill="none" stroke="#0f0e0c" stroke-width="1.5"/>
+    <circle cx="24" cy="6.6" r="1.7" fill="#c8a45d"/>
+    <g fill="none" stroke="#0f0e0c" stroke-linecap="round">
+      <path d="M14 37V13M34 37V13" stroke-width="2.4"/>
+      <path d="M14 13L24 25.5" stroke-width="2.9"/>
+      <path d="M34 13L24 25.5" stroke-width="1.5"/>
+      <path d="M14 30H34" stroke-width="1.5"/>
+    </g>
+    <circle cx="24" cy="25.5" r="2.3" fill="#c8a45d"/>
+  </g>
+  <text x="74" y="31" font-family="Jost, Futura, 'Century Gothic', sans-serif" font-weight="700" font-size="22" letter-spacing="5" fill="#0f0e0c">MAISON HEURE</text>
+  <text x="75" y="50" font-family="Cabin, Arial, sans-serif" font-weight="600" font-size="10" letter-spacing="2.6" fill="#656565">PRE-OWNED FINE WATCHES</text>
+</svg>

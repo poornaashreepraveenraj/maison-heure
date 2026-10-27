@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% load static store_extras %}
+{% block title %}{{ watch.title }} ({{ watch.reference_number }}) | Maison Heure{% endblock %}
+{% block description %}Pre-owned {{ watch.title }}, ref. {{ watch.reference_number }}, {{ watch.year }}, {{ watch.get_condition_display|lower }} condition. Authenticated with a 12-month warranty.{% endblock %}
+{% block body_class %}has-buy-bar{% endblock %}
+{% block content %}
+<div class="container">
+  <nav aria-label="Breadcrumb" style="padding-top: 24px;">
+    <ol class="breadcrumbs">
+      <li><a href="{% url 'store:shop' %}">Shop</a></li>
+      <li><a href="{% url 'store:shop' %}?brand={{ watch.brand.slug }}">{{ watch.brand.name }}</a></li>
+      <li aria-current="page">{{ watch.model }}</li>
+    </ol>
+  </nav>
+
+  <div class="product-layout" data-live-status-url="{% url 'store:api_watch_status' watch.slug %}" data-available="{{ watch.is_available|yesno:'true,false' }}">
+    {# Gallery: main image + thumbnail rail + click-to-zoom #}
+    <div class="gallery" data-gallery>
+      {% with main=watch.primary_image %}
+      <button class="gallery-main{% if main.is_photo %} has-photo{% endif %}" type="button" data-gallery-main aria-label="Zoom image">
+        <img src="{% if main %}{{ main.url }}{% else %}{% static 'img/watch-placeholder.svg' %}{% endif %}" alt="{% if main %}{{ main.alt }}{% else %}{{ watch.title }}{% endif %}" width="600" height="600" data-gallery-image>
+      </button>
+      {% endwith %}
+      <div class="gallery-thumbs">
+        {% for image in watch.gallery %}
+          <button type="button"{% if image.is_photo %} class="has-photo"{% endif %} data-gallery-thumb data-src="{{ image.url }}" data-alt="{{ image.alt }}" aria-label="Show {{ image.alt }}"{% if forloop.first %} aria-current="true"{% endif %}>
+            <img src="{{ image.url }}" alt="" loading="lazy" width="150" height="150">
+          </button>
+        {% endfor %}
+      </div>
+      {% for image in watch.gallery %}{% if image.credit %}{% ifchanged image.credit %}
+        <p class="caption photo-credit">Photo: <a href="{{ image.credit_url }}" target="_blank" rel="noopener">{{ image.credit }}</a> (Unsplash License)</p>
+      {% endifchanged %}{% endif %}{% endfor %}
+    </div>
+
+    {# Purchase panel #}
+    <div class="purchase">
+      <span class="eyebrow">{{ watch.brand.name }}</span>
+      <h1>{{ watch.model }}</h1>
+      <p class="caption">Reference {{ watch.reference_number }} · {{ watch.year }}</p>
+      <div class="row-between">
+        {% price watch.price_inr "price price-lg" %}
+        <div class="stars" aria-label="Seller rating 4.9 out of 5">{% include "partials/stars.html" %}<span class="rating">4.9</span></div>
+      </div>
+      {% if watch.original_retail_inr %}<p class="caption">Original retail {% price watch.original_retail_inr "" %}</p>{% endif %}
+      <div class="badges">
+        <span class="badge badge-outline">{{ watch.get_condition_display }}</span>
+        {% if watch.status == "sold" %}<span class="badge badge-ink">Sold</span>
+        {% elif not watch.is_available %}<span class="badge">Reserved</span>
+        {% else %}<span class="badge badge-success">Available</span>{% endif %}
+        {% if watch.box_and_papers %}<span class="badge">Box &amp; Papers</span>{% endif %}
+      </div>
+
+      <div class="purchase-actions">
+        {% if watch.is_available %}
+          <div class="row">
+            {% if in_bag %}
+              <a class="btn btn-outline" href="{% url 'cart:bag' %}">In your bag — view bag</a>
+            {% else %}
+              <form method="post" action="{% url 'cart:add' watch.pk %}" data-add-to-bag style="flex: 1; display: flex;">
+                {% csrf_token %}
+                <button class="btn btn-outline btn-block" type="submit">Add to Bag</button>
+              </form>
+            {% endif %}
+            <form method="post" action="{% url 'accounts:wishlist_toggle' watch.pk %}" data-wishlist>
+              {% csrf_token %}
+              <input type="hidden" name="next" value="{{ request.path }}">
+              <button class="icon-btn wish-btn" type="submit" aria-pressed="{{ in_wishlist|yesno:'true,false' }}" aria-label="{% if in_wishlist %}Remove from{% else %}Save to{% endif %} wishlist" style="border: 1px solid var(--color-linen);">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>
+              </button>
+            </form>
+          </div>
+          <form method="post" action="{% url 'cart:add' watch.pk %}">
+            {% csrf_token %}
+            <input type="hidden" name="express" value="1">
+            <button class="btn btn-express" type="submit">Express checkout</button>
+          </form>
+          <p class="caption">Express checkout is a demo shortcut: it adds the watch and opens the bag.</p>
+        {% else %}
+          <button class="btn btn-block" type="button" disabled>{% if watch.status == "sold" %}Sold{% else %}Reserved{% endif %}</button>
+          <button class="btn btn-outline btn-block" type="button" data-ask="Please notify me when a watch similar to the {{ watch.title }} ({{ watch.reference_number }}) arrives.">Notify me</button>
+        {% endif %}
+        <button class="btn-text" type="button" data-ask="Is the {{ watch.title }} {{ watch.reference_number }} still available?">Ask about this watch</button>
+      </div>
+
+      <div class="delivery-note">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="18" r="1.6"/><circle cx="17" cy="18" r="1.6"/></svg>
+        <span>Order today for insured express delivery <strong>{{ delivery_from|date:"D j M" }} – {{ delivery_to|date:"D j M" }}</strong>. OTP and signature required.</span>
+      </div>
+
+      <table class="spec-table">
+        <caption class="visually-hidden">Key specifications</caption>
+        <tr><th scope="row">Case size</th><td>{{ watch.case_size_mm|floatformat:"-1" }} mm</td></tr>
+        <tr><th scope="row">Material</th><td>{{ watch.case_material }}</td></tr>
+        <tr><th scope="row">Movement</th><td>{{ watch.get_movement_display }}</td></tr>
+        <tr><th scope="row">Year</th><td>{{ watch.year }}</td></tr>
+        <tr><th scope="row">Box &amp; papers</th><td>{{ watch.box_and_papers|yesno:"Included,Not included" }}</td></tr>
+        <tr><th scope="row">Warranty</th><td>12-month Maison Heure warranty</td></tr>
+        <tr><th scope="row">Style</th><td>{{ watch.get_style_display }}</td></tr>
+        <tr><th scope="row">For</th><td><a class="link" href="{% url 'store:shop' %}?gender={{ watch.gender }}">{{ watch.get_gender_display }}</a></td></tr>
+      </table>
+
+      <div class="prose">
+        <h2 class="title-sm" style="margin-bottom: 8px;">About this watch</h2>
+        <p>{{ watch.description }}</p>
+      </div>
+      <div class="panel small">
+        <strong>Certificate of authenticity.</strong> This watch passed our four-step inspection. Its signed report, timegrapher reading and photographs ship with the watch.
+      </div>
+    </div>
+  </div>
+
+  {% if related %}
+  <section class="section" aria-labelledby="related-title">
+    {% include "partials/section_head.html" with eyebrow="You may also like" title="Related watches" heading_id="related-title" %}
+    <div class="product-grid">{% include "store/_cards.html" with watches=related page=None %}</div>
+  </section>
+  {% endif %}
+</div>
+
+<div class="mobile-buy-bar">
+  <div>
+    <div class="caption">{{ watch.brand.name }}</div>
+    {% price watch.price_inr %}
+  </div>
+  {% if watch.is_available and not in_bag %}
+    <form method="post" action="{% url 'cart:add' watch.pk %}" data-add-to-bag>
+      {% csrf_token %}
+      <button class="btn btn-primary" type="submit">Add to Bag</button>
+    </form>
+  {% elif in_bag %}
+    <a class="btn btn-primary" href="{% url 'cart:bag' %}">View bag</a>
+  {% else %}
+    <span class="badge badge-ink">{{ watch.get_status_display }}</span>
+  {% endif %}
+</div>
+{% endblock %}
+{% block scripts %}<script src="{% static 'js/shop.js' %}" defer></script>{% endblock %}

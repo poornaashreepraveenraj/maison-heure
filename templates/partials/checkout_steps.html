@@ -1,0 +1,5 @@
+<ol class="steps" aria-label="Checkout progress">
+  <li class="{% if step == 'shipping' %}is-current{% else %}is-done{% endif %}"{% if step == 'shipping' %} aria-current="step"{% endif %}>Shipping</li>
+  <li class="{% if step == 'delivery' %}is-current{% elif step == 'payment' %}is-done{% endif %}"{% if step == 'delivery' %} aria-current="step"{% endif %}>Delivery</li>
+  <li class="{% if step == 'payment' %}is-current{% endif %}"{% if step == 'payment' %} aria-current="step"{% endif %}>Payment</li>
+</ol>

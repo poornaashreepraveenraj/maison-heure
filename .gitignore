@@ -1,0 +1,22 @@
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Local data / build output
+db.sqlite3
+staticfiles_build/
+media/
+
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+
+# Tooling
+.claude/
+.vercel/
+.DS_Store
+.idea/
+.vscode/

@@ -1,0 +1,6 @@
+{% extends "errors/error_base.html" %}
+{% block code %}400{% endblock %}{% block heading %}Bad request{% endblock %}
+{% block code_display %}400{% endblock %}
+{% block message_title %}We couldn't read that request.{% endblock %}
+{% block message %}Something in the form or link wasn't in the format we expected. Please go back and try again.{% endblock %}
+{% block ask %}What does error 400 mean?{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Create an account | Maison Heure{% endblock %}
+{% block content %}
+<div class="auth-split">
+  {% include "partials/auth_visual.html" with tagline="Every watch has a second hour." %}
+  <div class="auth-form-wrap">
+    <form class="auth-form" method="post" novalidate>
+      {% csrf_token %}
+      <span class="eyebrow">Account</span>
+      <h1>Create account</h1>
+      <p class="muted small" style="margin-bottom: 24px;">Faster checkout, order tracking and a wishlist for the pieces you're watching.</p>
+      {% include "partials/form_field.html" with field=form.username %}
+      {% include "partials/form_field.html" with field=form.email %}
+      {% include "partials/form_field.html" with field=form.password1 %}
+      {% include "partials/form_field.html" with field=form.password2 %}
+      <input type="hidden" name="next" value="{{ next }}">
+      <button class="btn btn-primary" type="submit">Create account</button>
+      <p class="auth-switch">Already have an account? <a class="link" href="{% url 'accounts:login' %}{% if next %}?next={{ next|urlencode }}{% endif %}">Sign in</a></p>
+    </form>
+  </div>
+</div>
+{% endblock %}

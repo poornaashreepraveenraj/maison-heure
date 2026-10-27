@@ -1,0 +1,54 @@
+{% comment %}
+  The hero watch. Same illustration style as the catalogue placeholders, but the
+  hands are separate groups that main.js (initLiveClock) rotates to the visitor's
+  real local time. Without JavaScript it shows the classic 10:10 pose.
+{% endcomment %}
+<svg class="live-watch" viewBox="0 0 600 600" role="img" aria-label="Watch showing the current time" data-live-clock>
+  <defs>
+    <linearGradient id="lw-metal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ecebe6"/><stop offset=".5" stop-color="#c9c6be"/><stop offset="1" stop-color="#8f8b82"/>
+    </linearGradient>
+    <radialGradient id="lw-dial" cx=".38" cy=".32" r=".9">
+      <stop offset="0" stop-color="#2a2722"/><stop offset="1" stop-color="#0b0a09"/>
+    </radialGradient>
+  </defs>
+  {# Bracelet #}
+  <g fill="#bdb9b0" stroke="#8f8b82" stroke-width="2">
+    <rect x="232" y="18" width="136" height="155" rx="12"/>
+    <rect x="232" y="427" width="136" height="155" rx="12"/>
+  </g>
+  <g stroke="#8f8b82" stroke-width="2">
+    <path d="M234 44H366M234 70H366M234 96H366M234 122H366M234 148H366M234 452H366M234 478H366M234 504H366M234 530H366M234 556H366M276 20V170M324 20V170M276 430V580M324 430V580" fill="none"/>
+  </g>
+  {# Lugs, crown, case #}
+  <g fill="url(#lw-metal)" stroke="#6f6b63" stroke-width="2">
+    <rect x="166" y="120" width="44" height="60" rx="10"/><rect x="390" y="120" width="44" height="60" rx="10"/>
+    <rect x="166" y="420" width="44" height="60" rx="10"/><rect x="390" y="420" width="44" height="60" rx="10"/>
+    <rect x="468" y="280" width="30" height="40" rx="7"/>
+    <circle cx="300" cy="300" r="178" stroke-width="3"/>
+  </g>
+  {# Bezel with 60-minute scale and a champagne pip at 12 #}
+  <circle cx="300" cy="300" r="166" fill="#16140f"/>
+  <g stroke="#d9cfba">
+    {% for i in "123456789012345678901234567890123456789012345678901234567890" %}<line x1="300" y1="140" x2="300" y2="{% cycle '154' '147' '147' '147' '147' %}" stroke-width="{% cycle '3' '1.5' '1.5' '1.5' '1.5' %}" transform="rotate({% widthratio forloop.counter0 1 6 %} 300 300)"/>{% endfor %}
+  </g>
+  <circle cx="300" cy="146" r="6" fill="#c8a45d"/>
+  {# Dial, markers and date #}
+  <circle cx="300" cy="300" r="128" fill="url(#lw-dial)" stroke="#000" stroke-width="2"/>
+  <g stroke="#f3ead8" stroke-linecap="round">
+    {% for i in "123456789012" %}<line x1="300" y1="184" x2="300" y2="{% cycle '214' '204' '204' %}" stroke-width="{% cycle '10' '7' '7' %}" transform="rotate({% widthratio forloop.counter0 1 30 %} 300 300)"/>{% endfor %}
+  </g>
+  <rect x="368" y="287" width="36" height="26" rx="3" fill="#fffdf8" stroke="#6f6457"/>
+  <text x="386" y="306" text-anchor="middle" font-family="Poppins, Arial, sans-serif" font-size="17" font-weight="500" fill="#0f0e0c" data-live-date>{% now "j" %}</text>
+  <text x="300" y="248" text-anchor="middle" font-family="Jost, Futura, sans-serif" font-size="11" font-weight="700" letter-spacing="3" fill="#c8a45d">MAISON HEURE</text>
+  {# Hands: drawn pointing at 12, rotated by transform #}
+  <g data-hand="hour" transform="rotate(305 300 300)"><line x1="300" y1="318" x2="300" y2="222" stroke="#f3ead8" stroke-width="12" stroke-linecap="round"/></g>
+  <g data-hand="minute" transform="rotate(60 300 300)"><line x1="300" y1="322" x2="300" y2="186" stroke="#f3ead8" stroke-width="8" stroke-linecap="round"/></g>
+  <g data-hand="second" transform="rotate(210 300 300)">
+    <line x1="300" y1="330" x2="300" y2="180" stroke="#c8a45d" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="300" cy="196" r="6" fill="none" stroke="#c8a45d" stroke-width="2.5"/>
+  </g>
+  <circle cx="300" cy="300" r="9" fill="#f3ead8"/><circle cx="300" cy="300" r="4" fill="#c8a45d"/>
+  {# Crystal reflection #}
+  <path d="M190 230 A135 135 0 0 1 340 172" stroke="#ffffff" stroke-opacity=".14" stroke-width="16" fill="none" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,6 @@
+{% extends "errors/error_base.html" %}
+{% block code %}403{% endblock %}{% block heading %}Forbidden{% endblock %}
+{% block code_display %}403{% endblock %}
+{% block message_title %}{% if csrf_failure %}Your session timed out.{% else %}This door is locked.{% endif %}{% endblock %}
+{% block message %}{% if csrf_failure %}For your security, forms expire. Go back, refresh the page and submit it again.{% else %}You don't have permission to view this page — it may belong to another account. Check you're signed in to the right one.{% endif %}{% endblock %}
+{% block ask %}What does error 403 mean?{% endblock %}

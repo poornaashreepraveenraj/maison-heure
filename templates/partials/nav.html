@@ -1,0 +1,75 @@
+{% with path=request.path %}
+<header class="site-header{% if request.resolver_match.url_name == 'home' %} is-over-hero{% endif %}" data-header>
+  <div class="container nav-bar">
+    <div class="nav-left">
+      <button class="icon-btn" type="button" data-drawer-open="site-drawer" aria-controls="site-drawer" aria-expanded="false" aria-label="Open menu">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h18M3 12h18M3 17h18"/></svg>
+      </button>
+      <ul class="nav-links nav-desktop">
+        {% with gender=request.GET.gender %}
+        <li><a href="{% url 'store:shop' %}"{% if path == '/shop/' and not gender %} aria-current="page"{% endif %}>Shop</a></li>
+        <li><a href="{% url 'store:shop' %}?gender=men"{% if path == '/shop/' and gender == 'men' %} aria-current="page"{% endif %}>Men</a></li>
+        <li><a href="{% url 'store:shop' %}?gender=women"{% if path == '/shop/' and gender == 'women' %} aria-current="page"{% endif %}>Women</a></li>
+        <li><a href="{% url 'sell:sell' %}"{% if path == '/sell/' %} aria-current="page"{% endif %}>Sell</a></li>
+        {% endwith %}
+      </ul>
+    </div>
+    <a class="logo" href="{% url 'store:home' %}" aria-label="Maison Heure home">{% include "partials/logo.html" %}</a>
+    <div class="nav-right">
+      <ul class="nav-links nav-desktop">
+        <li class="nav-wide-only"><a href="{% url 'store:home' %}#new-in">Brands</a></li>
+        <li><a href="{% url 'orders:track' %}"{% if path == '/track/' %} aria-current="page"{% endif %}>Track Order</a></li>
+        <li><a href="{% url 'support:faq' %}"{% if path == '/faq/' %} aria-current="page"{% endif %}>FAQ</a></li>
+      </ul>
+      <a class="icon-btn optional" href="{% if user.is_authenticated %}{% url 'accounts:dashboard' %}{% else %}{% url 'accounts:login' %}{% endif %}" aria-label="{% if user.is_authenticated %}Your account{% else %}Sign in{% endif %}">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>
+      </a>
+      <a class="icon-btn" href="{% url 'cart:bag' %}" data-bag-icon aria-label="Bag, {{ bag_count }} item{{ bag_count|pluralize }}">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 13H6L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+        <span class="bag-count{% if not bag_count %} is-empty{% endif %}" data-bag-count>{{ bag_count }}</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<div class="drawer-backdrop" data-drawer-backdrop hidden></div>
+<nav id="site-drawer" class="drawer" aria-label="Main menu" data-drawer inert>
+  <div class="drawer-head">
+    <span class="logo logo-sm">{% include "partials/logo.html" %}</span>
+    <button class="icon-btn" type="button" data-drawer-close aria-label="Close menu">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+  <div class="drawer-body">
+    <ul class="drawer-links">
+      <li><a href="{% url 'store:shop' %}">Shop all</a></li>
+      <li><a href="{% url 'store:shop' %}?gender=men">Men's watches</a></li>
+      <li><a href="{% url 'store:shop' %}?gender=women">Women's watches</a></li>
+      <li><a href="{% url 'store:shop' %}?gender=unisex">Unisex watches</a></li>
+      <li><a href="{% url 'store:home' %}#new-in">New in</a></li>
+      <li><a href="{% url 'sell:sell' %}">Sell your watch</a></li>
+      <li><a href="{% url 'orders:track' %}">Track order</a></li>
+      <li><a href="{% url 'store:about' %}">Authentication</a></li>
+      <li><a href="{% url 'support:faq' %}">FAQ</a></li>
+      <li><a href="{% url 'support:contact' %}">Contact</a></li>
+      {% if user.is_authenticated %}
+        <li><a href="{% url 'accounts:dashboard' %}">My account</a></li>
+        <li><a href="{% url 'accounts:wishlist' %}">Wishlist</a></li>
+      {% else %}
+        <li><a href="{% url 'accounts:login' %}">Sign in</a></li>
+        <li><a href="{% url 'accounts:register' %}">Create account</a></li>
+      {% endif %}
+    </ul>
+    <p class="eyebrow" style="margin-top: 28px;">Brands</p>
+    <ul class="drawer-sub">
+      {% for brand in nav_brands %}<li><a href="{% url 'store:shop' %}?brand={{ brand.slug }}">{{ brand.name }}</a></li>{% endfor %}
+    </ul>
+    {% if user.is_authenticated %}
+      <form method="post" action="{% url 'accounts:logout' %}" style="margin-top: 28px;">
+        {% csrf_token %}
+        <button class="btn btn-ghost btn-block" type="submit">Sign out ({{ user.username }})</button>
+      </form>
+    {% endif %}
+  </div>
+</nav>
+{% endwith %}

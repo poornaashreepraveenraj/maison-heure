@@ -1,0 +1,18 @@
+{% load store_extras %}{% autoescape off %}Thank you for your order, {{ order.ship_name }}.
+
+Order reference: {{ order.reference }}
+{% for item in order.items.all %}
+- {{ item.watch.title }} (ref. {{ item.watch.reference_number }}): {{ item.price_at_purchase|inr }}{% endfor %}
+
+Shipping: {{ order.shipping|inr }}
+GST (margin scheme): {{ order.tax|inr }}{% if order.discount %}
+Discount ({{ order.promo_code }}): -{{ order.discount|inr }}{% endif %}
+Total: {{ order.total|inr }}
+
+Delivery: {{ order.get_delivery_method_display }}
+Estimated delivery: {{ order.estimated_delivery|date:"D j M Y" }}
+Track your order any time with your reference and this email address on the Track Order page.
+
+Maison Heure — authenticated pre-owned watches
+(This is a demo project; no payment was taken.)
+{% endautoescape %}

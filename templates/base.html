@@ -1,0 +1,32 @@
+{% load static %}<!doctype html>
+<html lang="en-IN" class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Maison Heure — Authenticated pre-owned luxury watches{% endblock %}</title>
+  <meta name="description" content="{% block description %}Maison Heure sells authenticated, pre-owned luxury watches in India — inspected, certified and delivered insured.{% endblock %}">
+  <link rel="icon" href="{% static 'img/favicon.svg' %}" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@700&family=Poppins:wght@400;500&family=Cabin:wght@500;600&display=swap">
+  <link rel="stylesheet" href="{% static 'css/tokens.css' %}">
+  <link rel="stylesheet" href="{% static 'css/base.css' %}">
+  <link rel="stylesheet" href="{% static 'css/components.css' %}">
+  <link rel="stylesheet" href="{% static 'css/pages.css' %}">
+  <script>document.documentElement.classList.remove("no-js");</script>
+  {% block head %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}" data-rates-url="{% url 'support:api_rates' %}">
+  <a class="skip-link" href="#main">Skip to content</a>
+  {% include "partials/nav.html" %}
+  {% include "partials/messages.html" %}
+  <main id="main" tabindex="-1">
+    {% block content %}{% endblock %}
+  </main>
+  {% include "partials/footer.html" %}
+  {% include "partials/chat.html" %}
+  <script src="{% static 'js/main.js' %}" defer></script>
+  <script src="{% static 'js/chat.js' %}" defer></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

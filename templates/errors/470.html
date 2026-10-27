@@ -1,0 +1,11 @@
+{% extends "errors/error_base.html" %}
+{% block code %}470{% endblock %}{% block heading %}Watch already sold{% endblock %}
+{% block code_display %}470{% endblock %}
+{% block message_title %}Someone got there first.{% endblock %}
+{% block message %}Every watch we sell is one of a kind, and {% if unavailable %}{% for watch in unavailable %}the {{ watch.title }}{% if not forloop.last %} and {% endif %}{% endfor %}{% else %}this watch{% endif %} was just bought or reserved by another collector. This is Maison Heure error 470.{% endblock %}
+{% block extra %}
+  <div class="row" style="justify-content: center; margin-top: 24px;">
+    <a class="btn btn-ghost" href="{% url 'cart:bag' %}">Review my bag</a>
+  </div>
+{% endblock %}
+{% block ask %}What does error 470 mean?{% endblock %}

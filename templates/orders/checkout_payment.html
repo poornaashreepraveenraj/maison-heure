@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load static store_extras %}
+{% block title %}Checkout — payment | Maison Heure{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="page-head" style="padding-bottom: 0;"><h1>Checkout</h1></div>
+  {% include "partials/checkout_steps.html" %}
+  <div class="checkout-layout">
+    <div class="form-panel stack">
+      <h2 class="title-sm">Review &amp; pay</h2>
+      <div class="grid grid-2" style="gap: 16px;">
+        <div class="panel small">
+          <span class="eyebrow">Ship to</span>
+          <p style="margin-top: 6px;">{{ shipping.name }}<br>{{ shipping.line1 }}{% if shipping.line2 %}<br>{{ shipping.line2 }}{% endif %}<br>{{ shipping.city }}, {{ shipping.state }} {{ shipping.pincode }}<br>{{ shipping.phone }}</p>
+          <a class="btn-text" href="{% url 'orders:checkout' %}">Edit</a>
+        </div>
+        <div class="panel small">
+          <span class="eyebrow">Delivery</span>
+          <p style="margin-top: 6px;">{{ delivery_option.label }}<br>{{ delivery_option.days }}</p>
+          <a class="btn-text" href="{% url 'orders:checkout_delivery' %}">Edit</a>
+        </div>
+      </div>
+      <div class="panel small" style="background: var(--surface-canvas); border: 1px dashed var(--color-linen);">
+        <strong>Demo payment.</strong> This project never collects or stores card details. Choose an outcome to simulate the payment gateway.
+      </div>
+      <form method="post" class="stack-sm" data-pay-form>
+        {% csrf_token %}
+        <button class="btn btn-primary btn-block" type="submit" name="outcome" value="success">Pay {% price totals.total "" %} (demo)</button>
+        <button class="btn btn-ghost btn-block" type="submit" name="outcome" value="fail">Simulate a declined payment</button>
+      </form>
+      <a class="btn-text" href="{% url 'orders:checkout_delivery' %}">← Delivery</a>
+    </div>
+    {% include "orders/_summary.html" %}
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{% static 'js/checkout.js' %}" defer></script>{% endblock %}

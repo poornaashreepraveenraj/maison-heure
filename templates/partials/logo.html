@@ -1,0 +1,16 @@
+{% comment %}
+  Maison Heure logo: MH monogram (the M's centre strokes are watch hands at 10:10) + wordmark.
+  Uses currentColor so it works on the white header, the dark hero and the footer.
+{% endcomment %}
+<svg class="logo-mark" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+  <circle cx="24" cy="24" r="22.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+  <circle cx="24" cy="6.6" r="1.7" fill="#c8a45d"/>
+  <g fill="none" stroke="currentColor" stroke-linecap="round">
+    <path d="M14 37V13M34 37V13" stroke-width="2.4"/>
+    <path d="M14 13L24 25.5" stroke-width="2.9"/>
+    <path d="M34 13L24 25.5" stroke-width="1.5"/>
+    <path d="M14 30H34" stroke-width="1.5"/>
+  </g>
+  <circle cx="24" cy="25.5" r="2.3" fill="#c8a45d"/>
+</svg>
+{% if not mark_only %}<span class="logo-word">Maison Heure</span>{% endif %}

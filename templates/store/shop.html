@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Shop pre-owned luxury watches | Maison Heure{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="page-head">
+    <span class="eyebrow">The collection</span>
+    <h1>{{ heading }}</h1>
+    <p>Authenticated, inspected and ready to wear.</p>
+  </div>
+
+  <div class="shop-layout">
+    <div class="drawer-backdrop" data-filters-backdrop hidden></div>
+    <aside class="filters" id="filters" aria-label="Filters" data-filters>
+      <div class="filters-head">
+        <span class="title-sm">Filters</span>
+        <button class="icon-btn" type="button" data-filters-close aria-label="Close filters"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      </div>
+      <form method="get" action="{% url 'store:shop' %}" data-filter-form>
+        {% if request.GET.style %}
+          <div class="filter-group">
+            <h3>Style</h3>
+            <label class="check"><input type="checkbox" name="style" value="{{ request.GET.style }}" checked> {{ request.GET.style|capfirst }}</label>
+          </div>
+        {% endif %}
+        <div class="filter-group">
+          <h3>For</h3>
+          {% for value, label in genders %}
+            <label class="check"><input type="checkbox" name="gender" value="{{ value }}"{% if value in selected.gender %} checked{% endif %}> {{ label }}</label>
+          {% endfor %}
+          <p class="caption">Men's and Women's include unisex pieces.</p>
+        </div>
+        <div class="filter-group">
+          <h3>Brand</h3>
+          {% for brand in brands %}
+            <label class="check"><input type="checkbox" name="brand" value="{{ brand.slug }}"{% if brand.slug in selected.brand %} checked{% endif %}> {{ brand.name }}</label>
+          {% endfor %}
+        </div>
+        <div class="filter-group">
+          <h3>Price (INR)</h3>
+          <div class="dual-range" data-dual-range data-min="{{ bounds.price_min }}" data-max="{{ bounds.price_max }}">
+            <div class="dual-range-track"></div>
+            <div class="dual-range-fill" data-range-fill></div>
+            <label class="visually-hidden" for="price-min">Minimum price</label>
+            <input id="price-min" type="range" name="price_min" min="{{ bounds.price_min }}" max="{{ bounds.price_max }}" step="5000" value="{{ request.GET.price_min|default:bounds.price_min }}" data-range-min>
+            <label class="visually-hidden" for="price-max">Maximum price</label>
+            <input id="price-max" type="range" name="price_max" min="{{ bounds.price_min }}" max="{{ bounds.price_max }}" step="5000" value="{{ request.GET.price_max|default:bounds.price_max }}" data-range-max>
+          </div>
+          <div class="range-values"><span data-range-min-out data-price-inr="{{ bounds.price_min }}"></span><span data-range-max-out data-price-inr="{{ bounds.price_max }}"></span></div>
+        </div>
+        <div class="filter-group">
+          <h3>Case size</h3>
+          {% for value, label in case_sizes %}
+            <label class="check"><input type="checkbox" name="size" value="{{ value }}"{% if value in selected.size %} checked{% endif %}> {{ label }}</label>
+          {% endfor %}
+        </div>
+        <div class="filter-group">
+          <h3>Movement</h3>
+          {% for value, label in movements %}
+            <label class="check"><input type="checkbox" name="movement" value="{{ value }}"{% if value in selected.movement %} checked{% endif %}> {{ label }}</label>
+          {% endfor %}
+        </div>
+        <div class="filter-group">
+          <h3>Condition</h3>
+          {% for value, label in conditions %}
+            <label class="check"><input type="checkbox" name="condition" value="{{ value }}"{% if value in selected.condition %} checked{% endif %}> {{ label }}</label>
+          {% endfor %}
+        </div>
+        <div class="filter-group">
+          <h3>Year</h3>
+          <div class="field-row">
+            <div class="field"><label for="year-min">From</label><input id="year-min" type="number" name="year_min" min="{{ bounds.year_min }}" max="{{ bounds.year_max }}" placeholder="{{ bounds.year_min }}" value="{{ request.GET.year_min }}" inputmode="numeric"></div>
+            <div class="field"><label for="year-max">To</label><input id="year-max" type="number" name="year_max" min="{{ bounds.year_min }}" max="{{ bounds.year_max }}" placeholder="{{ bounds.year_max }}" value="{{ request.GET.year_max }}" inputmode="numeric"></div>
+          </div>
+        </div>
+        <div class="filter-group">
+          <label class="check"><input type="checkbox" name="papers" value="1"{% if request.GET.papers == "1" %} checked{% endif %}> Box &amp; papers only</label>
+          <label class="check"><input type="checkbox" name="available" value="1"{% if request.GET.available == "1" %} checked{% endif %}> Available now</label>
+        </div>
+        <div class="row" style="margin-top: 16px;">
+          <button class="btn btn-primary" type="submit">Apply filters</button>
+          <a class="btn-text" href="{% url 'store:shop' %}" data-clear-filters>Clear all</a>
+        </div>
+      </form>
+    </aside>
+
+    <div>
+      <div class="shop-toolbar">
+        <form class="shop-search" method="get" action="{% url 'store:shop' %}" role="search">
+          <label class="visually-hidden" for="shop-q">Search watches</label>
+          <input class="input" id="shop-q" type="search" name="q" value="{{ request.GET.q }}" placeholder="Search model, brand or reference">
+          <button class="btn btn-outline" type="submit">Search</button>
+        </form>
+        <div class="row">
+          <button class="btn btn-ghost filters-toggle" type="button" data-filters-open aria-controls="filters" aria-expanded="false">Filters</button>
+          <label class="visually-hidden" for="sort">Sort by</label>
+          <select class="input" id="sort" style="width: auto;" data-sort>
+            {% for value, label in sorts %}<option value="{{ value }}"{% if request.GET.sort == value %} selected{% endif %}>{{ label }}</option>{% endfor %}
+          </select>
+        </div>
+      </div>
+      <p class="results-count" aria-live="polite" data-results-count><span class="live-dot" aria-hidden="true"></span>{{ total }} watch{{ total|pluralize:"es" }}{% if request.GET.q %} for “{{ request.GET.q }}”{% endif %}</p>
+      <div class="product-grid" style="margin-top: 16px;" data-results>
+        {% include "store/_cards.html" %}
+      </div>
+      <div class="load-more-wrap" data-load-more-wrap{% if not page.has_next %} hidden{% endif %}>
+        <button class="btn btn-outline" type="button" data-load-more data-next="{% if page.has_next %}{{ page.next_page_number }}{% endif %}" data-query="{{ querystring }}">Load more</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{% static 'js/shop.js' %}" defer></script>{% endblock %}

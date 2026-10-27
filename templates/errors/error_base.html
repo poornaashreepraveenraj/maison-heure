@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}{% block code %}{% endblock %} {% block heading %}{% endblock %} | Maison Heure{% endblock %}
+{% block content %}
+<section class="container error-page" aria-labelledby="error-title">
+  <div class="error-code">
+    {# Slowly rotating dive-bezel ring behind the number #}
+    <svg class="bezel" viewBox="0 0 200 200" aria-hidden="true">
+      <circle cx="100" cy="100" r="96" fill="none" stroke="#0f0e0c" stroke-width="2"/>
+      <circle cx="100" cy="100" r="78" fill="none" stroke="#ddd2bf" stroke-width="1"/>
+      <g stroke="#0f0e0c">
+        {% for i in "123456789012345678901234567890123456789012345678901234567890" %}<line x1="100" y1="6" x2="100" y2="{% cycle '20' '12' '12' '12' '12' %}" stroke-width="{% cycle '3' '1' '1' '1' '1' as w %}" transform="rotate({% widthratio forloop.counter0 1 6 %} 100 100)"/>{% endfor %}
+      </g>
+      <circle cx="100" cy="14" r="5" fill="#c8a45d"/>
+    </svg>
+    <span class="num">{% block code_display %}{% endblock %}</span>
+  </div>
+  <h1 id="error-title">{% block message_title %}{% endblock %}</h1>
+  <p>{% block message %}{% endblock %}</p>
+  {% block extra %}{% endblock %}
+  <div class="error-actions">
+    <a class="btn btn-primary" href="{% url 'store:shop' %}">Back to shop</a>
+    <button class="btn btn-outline" type="button" data-ask="{% block ask %}{% endblock %}">Ask the assistant</button>
+    <a class="btn-text" href="{% url 'support:error_codes' %}" style="align-self: center;">All error codes</a>
+  </div>
+</section>
+{% endblock %}

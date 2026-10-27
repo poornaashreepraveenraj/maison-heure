@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Error codes | Maison Heure{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="page-head">
+    <span class="eyebrow">Help centre</span>
+    <h1>Error codes</h1>
+    <p>What each error means on Maison Heure, and how to fix it. Code 470 is specific to our site.</p>
+  </div>
+  <div class="code-grid">
+    {% for code in codes %}
+      <article class="code-card reveal{% if code.is_site_specific %} is-site{% endif %}" id="error-{{ code.code }}">
+        <div class="row-between">
+          <span class="code">{{ code.code }}</span>
+          {% if code.is_site_specific %}<span class="badge badge-ink">Maison Heure specific</span>{% else %}<span class="badge">HTTP standard</span>{% endif %}
+        </div>
+        <h2 class="title-sm">{{ code.title }}</h2>
+        <p class="small"><strong>Meaning:</strong> {{ code.explanation }}</p>
+        <p class="small"><strong>Fix:</strong> {{ code.fix }}</p>
+        <button class="btn-text" type="button" data-ask="What does error {{ code.code }} mean?">Ask the assistant about {{ code.code }}</button>
+      </article>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
