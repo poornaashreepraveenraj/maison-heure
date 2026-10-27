@@ -4,7 +4,7 @@
 
 The logo is an **MH monogram**: the centre strokes of the M are a watch's hands set at 10:10 (thick hour hand, thin minute hand), inside a dial ring with a champagne-gold pivot and lume pip at 12. The site uses a **Noir & Champagne** palette (ivory pages, noir hero and footer, champagne-gold accents, bordeaux badges; tokens in `static/css/tokens.css`). Live UI: the hero watch shows the visitor's real time, shop filters and search update instantly, checkout shows a live hold countdown, product pages warn if a watch sells while open, order timelines and `/health/` refresh themselves. Files: `static/img/logo.svg` (lockup), `static/img/logo-mark.svg` (monogram), `static/img/favicon.svg`, and `templates/partials/logo.html` (inline version that takes the text colour).
 
-**Task title:** *Maison Heure — A Luxury Pre-Owned Watch Resale Platform with an AI Support Assistant*
+**Task title:** *Maison Heure — A Luxury Pre-Owned Watch Resale Platform*
 
 Maison Heure is a responsive Django website for buying and selling authenticated pre-owned luxury watches in India. It includes a shop with filters, a product gallery, a bag with 15-minute reservations, a 3-step checkout (demo payment), order tracking, consignments, and a concierge chat on every page. The concierge answers from the FAQ and error-code database, looks up orders, falls back to Claude, and opens a support ticket when it can't answer.
 
