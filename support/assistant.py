@@ -1,4 +1,4 @@
-"""Maison Heure Concierge: the support assistant's answer pipeline.
+"""Maison Heure Concierge: the support chat's answer pipeline.
 
 Each question goes through these steps in order and the first one that
 produces an answer wins:
@@ -187,7 +187,7 @@ def build_system_prompt():
     faqs = "\n".join(f"Q: {f.question}\nA: {f.answer}" for f in FAQ.objects.filter(is_published=True))
     codes = "\n".join(f"{c.code} {c.title}: {c.explanation} Fix: {c.fix}" for c in ErrorCode.objects.all())
     return (
-        "You are the Maison Heure Concierge, the support assistant for Maison Heure, an Indian online store for "
+        "You are the Maison Heure Concierge, the support concierge for Maison Heure, an Indian online store for "
         "authenticated pre-owned luxury watches.\n\n"
         "Answer only from the reference data below (the store's FAQs and error codes). Do not add facts about "
         "watches, brands, prices or policies that are not in it. Keep answers under 80 words, warm and plain. "

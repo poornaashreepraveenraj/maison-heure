@@ -8,7 +8,7 @@
     order: "From your order records",
     catalogue: "From our live catalogue",
     faq: "Answered from our FAQ",
-    ai: "AI answer based on our FAQ",
+    ai: "Answered by our concierge",
     ticket: "Support ticket created",
     smalltalk: "Concierge",
   };
