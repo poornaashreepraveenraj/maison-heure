@@ -149,6 +149,22 @@ Every `git push` to `main` redeploys automatically.
 
 ---
 
+## Deploy to Render (alternative)
+
+1. **New → Web Service** → connect the `maison-heure` GitHub repo. Runtime **Python 3**.
+2. **Build Command:**
+   ```
+   pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate --noinput
+   ```
+3. **Start Command** (the WSGI module is `config.wsgi`):
+   ```
+   gunicorn config.wsgi:application --bind 0.0.0.0:$PORT
+   ```
+4. **Environment variables:** `SECRET_KEY`, `DATABASE_URL` (a Render Postgres or Neon link), and optionally `MONGODB_URI`, `MONGODB_DB` and `ANTHROPIC_API_KEY`. `DEBUG` is off automatically on Render, and the service's `*.onrender.com` address is added to `ALLOWED_HOSTS` and `CSRF_TRUSTED_ORIGINS` for you.
+5. Static files are served by WhiteNoise, so no extra static hosting is needed.
+
+---
+
 ## Launch checklist
 
 | # | Check | How to verify |

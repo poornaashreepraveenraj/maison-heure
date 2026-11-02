@@ -49,8 +49,9 @@ def env_list(name, default=""):
 # --- Core -----------------------------------------------------------------
 
 ON_VERCEL = bool(env("VERCEL"))
-# DEBUG is off by default on Vercel, on by default locally.
-DEBUG = env_bool("DEBUG", default=not ON_VERCEL)
+ON_RENDER = bool(env("RENDER"))  # Render sets RENDER=true on every service
+# DEBUG is off by default on Vercel and Render, on by default locally.
+DEBUG = env_bool("DEBUG", default=not (ON_VERCEL or ON_RENDER))
 
 SECRET_KEY = env("SECRET_KEY")
 if not SECRET_KEY:
@@ -59,8 +60,14 @@ if not SECRET_KEY:
     else:
         raise ImproperlyConfigured("SECRET_KEY must be set when DEBUG is False.")
 
-ALLOWED_HOSTS = env_list("ALLOWED_HOSTS", "localhost,127.0.0.1,[::1],testserver,.vercel.app")
+ALLOWED_HOSTS = env_list("ALLOWED_HOSTS", "localhost,127.0.0.1,[::1],testserver,.vercel.app,.onrender.com")
 CSRF_TRUSTED_ORIGINS = env_list("CSRF_TRUSTED_ORIGINS", "")
+
+# Render tells the app its public hostname, so the live site works without extra setup.
+RENDER_HOST = env("RENDER_EXTERNAL_HOSTNAME")
+if RENDER_HOST:
+    ALLOWED_HOSTS.append(RENDER_HOST)
+    CSRF_TRUSTED_ORIGINS.append(f"https://{RENDER_HOST}")
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -80,6 +87,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "support.middleware.RequestLoggingMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",  # serves /static/ files when DEBUG=False (Render, gunicorn)
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -178,6 +186,11 @@ USE_TZ = True
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles_build" / "static"
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    # Compresses files at collectstatic time; no manifest, so tests and local runs need no build step.
+    "staticfiles": {"BACKEND": "whitenoise.storage.CompressedStaticFilesStorage"},
+}
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 

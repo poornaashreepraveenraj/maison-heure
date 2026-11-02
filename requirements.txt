@@ -2,4 +2,5 @@ Django>=6.0,<7.0
 psycopg[binary]>=3.2
 pymongo>=4.10
 anthropic>=1.11
-gunicorn
+gunicorn>=22.0
+whitenoise>=6.7
