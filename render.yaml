@@ -1,0 +1,29 @@
+# Render Blueprint: New -> Blueprint -> pick this repo, and Render creates the
+# database and the web service with every setting below. Nothing to type by hand
+# except the optional MongoDB link and Claude key.
+databases:
+  - name: maison-heure-db
+    plan: free
+    databaseName: maison_heure
+    user: maison_heure
+
+services:
+  - type: web
+    name: maison-heure
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate --noinput
+    startCommand: gunicorn config.wsgi:application --bind 0.0.0.0:$PORT
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: maison-heure-db
+          property: connectionString
+      - key: MONGODB_URI
+        sync: false
+      - key: MONGODB_DB
+        value: maison_heure
+      - key: ANTHROPIC_API_KEY
+        sync: false
