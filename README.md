@@ -111,7 +111,7 @@ python manage.py test
 | FAQ · error codes · contact | `/faq/`, `/error-codes/`, `/contact/` |
 | Register / login / logout (POST) | `/register/`, `/login/`, `/logout/` |
 | Health | `/health/`, `/health/?format=json` |
-| JSON APIs | `/api/watches/?brand=rolex`, `/api/rates/`, `POST /api/chat/`, `POST /api/feedback/` |
+| JSON APIs | `/api/faqs/` (add `?q=` to search), `/api/watches/?brand=rolex`, `/api/rates/`, `POST /api/chat/`, `POST /api/feedback/` |
 | Custom 404 · 500 (staff only) | any unknown URL · `/debug/500/` |
 | Admin | `/admin/` |
 
