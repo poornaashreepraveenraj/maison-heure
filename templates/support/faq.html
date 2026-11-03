@@ -1,23 +1,31 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}FAQ | Maison Heure{% endblock %}
 {% block content %}
-<div class="container container-narrow">
+<div class="container container-narrow" data-faq-root data-api-url="{% url 'support:api_faqs' %}">
   <div class="page-head">
     <span class="eyebrow">Help centre</span>
     <h1>Frequently asked questions</h1>
     <p>{{ faq_count }} answers, straight from our database — the same answers our concierge gives in chat.</p>
   </div>
+  <div class="field" style="margin-bottom: 8px;">
+    <label for="faq-search">Search the FAQ</label>
+    <input id="faq-search" type="search" placeholder="e.g. returns, warranty, delivery" autocomplete="off" data-faq-search>
+  </div>
+  <p class="caption" aria-live="polite" data-faq-status></p>
+  <div data-faq-list>
   {% for category, faqs in groups %}
     <h2 class="faq-category label-lg">{{ category }}</h2>
     <div class="faq-list">
       {% for faq in faqs %}
-        <details class="faq-item reveal" id="faq-{{ faq.pk }}">
+        <details class="faq-item" id="faq-{{ faq.pk }}">
           <summary>{{ faq.question }}</summary>
           <div class="answer">{{ faq.answer|linebreaksbr }}</div>
         </details>
       {% endfor %}
     </div>
   {% endfor %}
+  </div>
   <div class="panel text-center" style="margin-top: 50px;">
     <h2 class="title-sm">Still stuck?</h2>
     <p class="small" style="margin: 8px 0 16px;">Ask the concierge — if it can't answer, it opens a support ticket for our team.</p>
@@ -25,3 +33,4 @@
   </div>
 </div>
 {% endblock %}
+{% block scripts %}<script src="{% static 'js/faq.js' %}" defer></script>{% endblock %}

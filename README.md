@@ -41,13 +41,13 @@ Task title: *Maison Heure — A Luxury Pre-Owned Watch Resale Platform*
 | Marking column | Where it is implemented |
 |---|---|
 | **Website (/10)** | 20+ responsive pages (see URL list below). Chat widget in `templates/partials/chat.html`, included by `templates/base.html`, so it appears on every page. |
-| **FAQ (/10)** | `support.FAQ` model; 16 FAQs seeded by `support/migrations/0002` and `0003`; shown at `/faq/`. |
+| **FAQ (/10)** | `support.FAQ` model; 16 FAQs seeded by `support/migrations/0002` and `0003`. The `/faq/` page loads and searches them through the JSON API `GET /api/faqs/` (the server-rendered list is the no-JavaScript fallback). |
 | **Error codes (/15)** | `support.ErrorCode` with 400, 401, 403, 404, 405, 429, 500, 503 plus the site-specific **470 Watch Already Sold**, shown at `/error-codes/`. Custom `404.html`, `500.html`, `403.html`, `400.html`, `errors/429.html` and `errors/470.html`, each with an **Ask the assistant** button. 470 is raised for real in `cart/views.py` and `orders/services.py`. |
 | **Support concierge (/25)** | `support/assistant.py`: error codes → orders → catalogue → FAQ scoring → Claude (`claude-opus-5-5`, low effort, 15 s timeout, refusal fallback) → **SupportTicket**. API: `POST /api/chat/`. |
 | **Backend & data (/15)** | SQL: watches, orders, tickets, FAQs, consignments and more (Django ORM; SQLite locally, PostgreSQL in production). MongoDB: `chat_logs` and `feedback` collections (`support/mongo.py`). Every model is registered in admin with filters, search, inlines and actions. |
 | **Deployment & security (/15)** | Vercel (`vercel.json`, `build_files.sh`, `app = application` in `config/wsgi.py`). Every secret comes from an environment variable and `.env` is git-ignored. CSRF on all forms and `fetch` calls; secure cookies, HSTS, SSL redirect and `X_FRAME_OPTIONS=DENY` when `DEBUG=False`; `DEBUG` defaults to False on Vercel. |
 | **Monitoring & feedback (/5)** | `support/middleware.py` logs method, path, status, duration, user and IP for every request. `/health/` page plus JSON. 👍/👎 feedback under every concierge answer is stored in MongoDB. |
-| **Viva (/5)** | One app per responsibility; business logic in `services.py`, `assistant.py` and `pricing.py`; comments where logic isn't obvious; 76 automated tests. |
+| **Viva (/5)** | One app per responsibility; business logic in `services.py`, `assistant.py` and `pricing.py`; comments where logic isn't obvious; 79 automated tests. |
 | **Third-party API with timeout + fallback** | `support/rates.py`: open.er-api.com with `timeout=3`, a 10-minute cache and static fallback rates. `GET /api/rates/` returns `source: live\|fallback`, and the UI shows "Live rates" or "Showing fallback rates". |
 
 ---

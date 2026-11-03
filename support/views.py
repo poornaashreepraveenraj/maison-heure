@@ -7,6 +7,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.db import connection
+from django.db.models import Q
 from django.http import HttpResponseServerError, JsonResponse
 from django.shortcuts import redirect, render
 from django.views.decorators.http import require_GET, require_POST
@@ -90,6 +91,17 @@ def api_feedback(request):
         comment=str(data.get("comment", ""))[:500],
     )
     return JsonResponse({"ok": True, "stored": stored})
+
+
+@require_GET
+def api_faqs(request):
+    """Published FAQs as JSON. The FAQ page loads and searches its questions through this."""
+    faqs = FAQ.objects.filter(is_published=True).order_by("category", "order", "pk")
+    query = request.GET.get("q", "").strip()[:100]
+    if query:
+        faqs = faqs.filter(Q(question__icontains=query) | Q(answer__icontains=query) | Q(keywords__icontains=query))
+    results = [{"id": f.pk, "category": f.category, "question": f.question, "answer": f.answer} for f in faqs]
+    return JsonResponse({"count": len(results), "query": query, "results": results})
 
 
 @require_GET

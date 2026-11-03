@@ -11,6 +11,7 @@ urlpatterns = [
     path("health/", views.health, name="health"),
     path("api/chat/", views.api_chat, name="api_chat"),
     path("api/feedback/", views.api_feedback, name="api_feedback"),
+    path("api/faqs/", views.api_faqs, name="api_faqs"),
     path("api/rates/", views.api_rates, name="api_rates"),
     path("debug/500/", views.debug_500, name="debug_500"),
 ]

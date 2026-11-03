@@ -27,6 +27,25 @@ class SeedDataTests(TestCase):
         for faq in FAQ.objects.all():
             self.assertContains(response, faq.question.replace("'", "&#x27;"))
 
+    def test_faq_api_returns_published_faqs_from_sql(self):
+        data = self.client.get("/api/faqs/").json()
+        self.assertGreaterEqual(data["count"], 10)
+        self.assertEqual(data["count"], FAQ.objects.filter(is_published=True).count())
+        self.assertEqual(set(data["results"][0]), {"id", "category", "question", "answer"})
+        FAQ.objects.filter(pk=data["results"][0]["id"]).update(is_published=False)
+        self.assertEqual(self.client.get("/api/faqs/").json()["count"], data["count"] - 1)
+
+    def test_faq_api_search(self):
+        data = self.client.get("/api/faqs/?q=return").json()
+        self.assertGreaterEqual(data["count"], 1)
+        self.assertTrue(all("return" in (r["question"] + r["answer"]).lower() for r in data["results"]))
+        self.assertEqual(self.client.get("/api/faqs/?q=zzzznomatch").json()["count"], 0)
+
+    def test_faq_page_is_wired_to_the_api(self):
+        response = self.client.get("/faq/")
+        self.assertContains(response, 'data-api-url="/api/faqs/"')
+        self.assertContains(response, "js/faq.js")
+
     def test_required_error_codes_exist_and_are_listed(self):
         codes = set(ErrorCode.objects.values_list("code", flat=True))
         self.assertTrue(REQUIRED_CODES <= codes)
