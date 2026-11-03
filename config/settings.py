@@ -69,6 +69,13 @@ if RENDER_HOST:
     ALLOWED_HOSTS.append(RENDER_HOST)
     CSRF_TRUSTED_ORIGINS.append(f"https://{RENDER_HOST}")
 
+# Vercel exposes the production domain and the per-deployment domain at runtime.
+for _name in ("VERCEL_PROJECT_PRODUCTION_URL", "VERCEL_BRANCH_URL", "VERCEL_URL"):
+    _host = env(_name)
+    if _host:
+        ALLOWED_HOSTS.append(_host)
+        CSRF_TRUSTED_ORIGINS.append(f"https://{_host}")
+
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -191,6 +198,8 @@ STORAGES = {
     # Compresses files at collectstatic time; no manifest, so tests and local runs need no build step.
     "staticfiles": {"BACKEND": "whitenoise.storage.CompressedStaticFilesStorage"},
 }
+# On Vercel there is no collectstatic step: WhiteNoise serves straight from static/.
+WHITENOISE_USE_FINDERS = ON_VERCEL or DEBUG
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 

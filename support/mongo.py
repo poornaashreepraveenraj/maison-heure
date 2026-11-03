@@ -14,7 +14,7 @@ from django.utils import timezone
 logger = logging.getLogger("maisonheure.mongo")
 
 _client = None
-_last_failure = 0.0
+_last_failure = float("-inf")  # monotonic() counts from boot, so 0.0 would look "recent" on a fresh server
 RETRY_AFTER_SECONDS = 60
 
 
@@ -32,7 +32,7 @@ def get_db():
         if _client is None:
             from pymongo import MongoClient
 
-            _client = MongoClient(settings.MONGODB_URI, serverSelectionTimeoutMS=2500, connectTimeoutMS=2500)
+            _client = MongoClient(settings.MONGODB_URI, serverSelectionTimeoutMS=5000, connectTimeoutMS=5000)
         return _client[settings.MONGODB_DB]
     except Exception as exc:
         _last_failure = time.monotonic()

@@ -8,7 +8,7 @@ Task title: *Maison Heure — A Luxury Pre-Owned Watch Resale Platform*
 
 | | |
 |---|---|
-| **Live site** | https://YOUR-PROJECT.vercel.app *(add after deploying)* |
+| **Live site** | https://maison-heure-tau.vercel.app |
 | **GitHub** | https://github.com/poornaashreepraveenraj/maison-heure |
 | **Admin** | `/admin/` (create a superuser) |
 | **Health** | `/health/` and `/health/?format=json` |
@@ -45,7 +45,7 @@ Task title: *Maison Heure — A Luxury Pre-Owned Watch Resale Platform*
 | **Error codes (/15)** | `support.ErrorCode` with 400, 401, 403, 404, 405, 429, 500, 503 plus the site-specific **470 Watch Already Sold**, shown at `/error-codes/`. Custom `404.html`, `500.html`, `403.html`, `400.html`, `errors/429.html` and `errors/470.html`, each with an **Ask the assistant** button. 470 is raised for real in `cart/views.py` and `orders/services.py`. |
 | **Support concierge (/25)** | `support/assistant.py`: error codes → orders → catalogue → FAQ scoring → Claude (`claude-opus-5-5`, low effort, 15 s timeout, refusal fallback) → **SupportTicket**. API: `POST /api/chat/`. |
 | **Backend & data (/15)** | SQL: watches, orders, tickets, FAQs, consignments and more (Django ORM; SQLite locally, PostgreSQL in production). MongoDB: `chat_logs` and `feedback` collections (`support/mongo.py`). Every model is registered in admin with filters, search, inlines and actions. |
-| **Deployment & security (/15)** | Vercel (`vercel.json`, `build_files.sh`, `app = application` in `config/wsgi.py`). Every secret comes from an environment variable and `.env` is git-ignored. CSRF on all forms and `fetch` calls; secure cookies, HSTS, SSL redirect and `X_FRAME_OPTIONS=DENY` when `DEBUG=False`; `DEBUG` defaults to False on Vercel. |
+| **Deployment & security (/15)** | Vercel (`vercel.json`, `app = application` in `config/wsgi.py`, Neon Postgres + MongoDB Atlas from the Vercel Marketplace). Every secret comes from an environment variable and `.env` is git-ignored. CSRF on all forms and `fetch` calls; secure cookies, HSTS, SSL redirect and `X_FRAME_OPTIONS=DENY` when `DEBUG=False`; `DEBUG` defaults to False on Vercel. |
 | **Monitoring & feedback (/5)** | `support/middleware.py` logs method, path, status, duration, user and IP for every request. `/health/` page plus JSON. 👍/👎 feedback under every concierge answer is stored in MongoDB. |
 | **Viva (/5)** | One app per responsibility; business logic in `services.py`, `assistant.py` and `pricing.py`; comments where logic isn't obvious; 79 automated tests. |
 | **Third-party API with timeout + fallback** | `support/rates.py`: open.er-api.com with `timeout=3`, a 10-minute cache and static fallback rates. `GET /api/rates/` returns `source: live\|fallback`, and the UI shows "Live rates" or "Showing fallback rates". |
@@ -124,7 +124,7 @@ python manage.py test
 | `SECRET_KEY` | **Yes in production** | long random string | Django signing key. The app refuses to start without it when `DEBUG=False`. |
 | `DEBUG` | No | `False` on Vercel, `True` locally | Never `True` in production. |
 | `ALLOWED_HOSTS` | Yes | `.vercel.app` | Hostnames allowed to serve the site. |
-| `CSRF_TRUSTED_ORIGINS` | Yes | `https://your-project.vercel.app` | Needed for HTTPS form posts. |
+| `CSRF_TRUSTED_ORIGINS` | No on Vercel | `https://example.com` | Extra origins for HTTPS form posts. Vercel's own production and deployment domains are added automatically. |
 | `DATABASE_URL` | **Yes in production** | `postgres://user:pass@host:5432/db?sslmode=require` | PostgreSQL (Neon / Vercel Postgres). Empty = SQLite. |
 | `MONGODB_URI` | Recommended | `mongodb+srv://…` | Chat logs + feedback. Empty = logging off; the site still works. |
 | `MONGODB_DB` | No | `maison_heure` | Mongo database name. |
@@ -137,15 +137,14 @@ python manage.py test
 
 ## Deploy to Vercel
 
-1. **Database:** create a free PostgreSQL database (Neon) and copy its connection string.
-2. **MongoDB:** create a free Atlas cluster, add a database user, allow `0.0.0.0/0` under *Network Access*, and copy the `mongodb+srv://` link.
-3. **Vercel:** *Add New → Project → Import* `maison-heure` from GitHub. Leave the framework preset as **Other** (`vercel.json` controls the build).
-4. **Environment variables:** add every variable from the table above to *Production*, with `DEBUG=False`.
-5. **Deploy.** `build_files.sh` installs the requirements, collects static files and runs the migrations, which also load the watches, FAQs and error codes into Postgres.
-6. **Admin user:** with `DATABASE_URL` set to the production database on your machine, run `python manage.py createsuperuser`.
-7. Open the live link and work through the checklist below; add the live link to the table at the top of this file.
+Live at **https://maison-heure-tau.vercel.app** (project `maison-heure`, functions in `bom1` Mumbai).
 
-Every `git push` to `main` redeploys automatically.
+1. **Vercel project:** *Add New → Project → Import* `maison-heure` from GitHub, framework preset **Other**. `vercel.json` builds `config/wsgi.py` with `@vercel/python`; WhiteNoise serves `/static/` from the function, so there is no separate build step.
+2. **Databases:** *Storage → Neon* (free) and *Marketplace → MongoDB Atlas* (free). Connecting them to the project adds `DATABASE_URL` and `MONGODB_URI` automatically. (CLI: `vercel integration add neon` / `vercel integration add mongodbatlas`.)
+3. **Environment variables:** add `SECRET_KEY` (long random string) and `MONGODB_DB=maison_heure` to *Production*; optionally `ANTHROPIC_API_KEY`. `DEBUG` is off automatically on Vercel.
+4. **Migrations (once, and after any model change):** `vercel env pull .env.local`, then run `python manage.py migrate` with `DATABASE_URL` set to the `DATABASE_URL_UNPOOLED` value from that file. This also loads the watches, FAQs and error codes.
+5. **Admin user:** same environment, `python manage.py createsuperuser`.
+6. **Deploy:** `vercel deploy --prod`, or push to `main` once the GitHub repo is connected.
 
 ---
 
@@ -167,20 +166,20 @@ Every `git push` to `main` redeploys automatically.
 
 ## Launch checklist
 
-| # | Check | How to verify |
-|---|---|---|
-| 1 | Live HTTPS link opens the landing page | Open the Vercel URL |
-| 2 | Works on a real phone | Menu drawer, filters drawer, product page "Add to Bag", checkout, chat bottom sheet |
-| 3 | Wrong address shows the custom 404 with "Ask the assistant" | `/this-does-not-exist/` |
-| 4 | 500 page is custom | Sign in as staff, open `/debug/500/` |
-| 5 | Chat is on every page and answers an FAQ | Ask "Is it authentic?" |
-| 6 | Chat explains an error code | Ask "What does error 470 mean?" or "error 429" |
-| 7 | An unanswerable question creates a ticket visible in admin | Ask something unrelated, then check `/admin/support/supportticket/` |
-| 8 | FAQ page lists ≥ 10 FAQs from the database | `/faq/` (16 loaded) |
-| 9 | Chat logs and feedback reach MongoDB | Atlas → `maison_heure.chat_logs` and `maison_heure.feedback` after chatting and clicking 👍/👎 |
-| 10 | `/health/` shows database, MongoDB and FX API status | `/health/` and `/health/?format=json` |
-| 11 | No secrets in the repository | `git grep -nE "sk-ant-\|mongodb\+srv://[^.]*:[^@]*@\|postgres://[^:]*:[^@]*@" -- ":!.env.example" ":!README.md"` returns nothing, and `git check-ignore .env` prints `.env` |
-| 12 | README has live link, GitHub link, setup, env table and a proposed improvement | This file |
+| # | Check | How to verify | Status |
+|---|---|---|---|
+| 1 | Live HTTPS link opens the landing page | Open the Vercel URL | ✅ 200 over HTTPS |
+| 2 | Works on a real phone | Menu drawer, filters drawer, product page "Add to Bag", checkout, chat bottom sheet | ✅ responsive layout (manual phone check recommended) |
+| 3 | Wrong address shows the custom 404 with "Ask the assistant" | `/this-does-not-exist/` | ✅ 404 page with "Ask the assistant" |
+| 4 | 500 page is custom | Sign in as staff, open `/debug/500/` | ✅ custom template (staff-only trigger) |
+| 5 | Chat is on every page and answers an FAQ | Ask "Is it authentic?" | ✅ FAQ answer returned |
+| 6 | Chat explains an error code | Ask "What does error 470 mean?" or "error 429" | ✅ 470 explained |
+| 7 | An unanswerable question creates a ticket visible in admin | Ask something unrelated, then check `/admin/support/supportticket/` | ✅ ticket MH-T-00001 created |
+| 8 | FAQ page lists ≥ 10 FAQs from the database | `/faq/` (16 loaded) | ✅ 16 FAQs via `/api/faqs/` |
+| 9 | Chat logs and feedback reach MongoDB | Atlas → `maison_heure.chat_logs` and `maison_heure.feedback` after chatting and clicking 👍/👎 | ✅ chat log + feedback `stored: true` |
+| 10 | `/health/` shows database, MongoDB and FX API status | `/health/` and `/health/?format=json` | ✅ database, MongoDB, FX all ok |
+| 11 | No secrets in the repository | `git grep -nE "sk-ant-\|mongodb\+srv://[^.]*:[^@]*@\|postgres://[^:]*:[^@]*@" -- ":!.env.example" ":!README.md"` returns nothing, and `git check-ignore .env` prints `.env` | ✅ scan clean; `.env`, `.env.local` ignored |
+| 12 | README has live link, GitHub link, setup, env table and a proposed improvement | This file | ✅ |
 
 ---
 

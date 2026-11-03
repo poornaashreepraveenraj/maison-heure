@@ -1,0 +1,9 @@
+db.sqlite3
+staticfiles_build/
+venv/
+.venv/
+**/__pycache__/
+.env
+.env.*
+.claude/
+scripts/
