@@ -28,13 +28,7 @@ Task title: *Maison Heure — A Luxury Pre-Owned Watch Resale Platform*
 
 **Design:** *Noir & Champagne* — ivory pages, noir hero and footer, champagne-gold accents, bordeaux badges, 3px corners, no shadows (tokens in `static/css/tokens.css`). The logo is an **MH monogram** whose centre strokes are a watch's hands set at 10:10, inside a dial ring.
 
----
 
-## Screenshots
-
-*Add screenshots here: landing page, shop, product page, the concierge answering a question, the 404 page, mobile view, the admin ticket list, and the MongoDB collections.*
-
----
 
 ## Requirement → feature map
 
